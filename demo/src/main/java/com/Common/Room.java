@@ -1,4 +1,4 @@
-package com.example.Common;
+package com.Common;
 
 public class Room {
    Player player1;
