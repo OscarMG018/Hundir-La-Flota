@@ -1,7 +1,9 @@
 package com.Server;
 
 import org.java_websocket.server.WebSocketServer;
-
+import java.net.InetSocketAddress;
+import org.java_websocket.WebSocket;
+import org.java_websocket.handshake.ClientHandshake;
 
 public class Server extends WebSocketServer {
 
