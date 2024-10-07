@@ -193,6 +193,11 @@ public class Server extends WebSocketServer {
         // TODO: Send pass turn message to the other player if missed
         // TODO: Send end game message when all ships are sunk
         break;
+      case MOUSE_POSITION:
+        // TODO: Handle mouse position message
+        // TODO: Send ack message
+        // TODO: Send MousePosition message to the other player
+        break;
       default:
         player.sendMessage(new ErrorMessage("Invalid message type", type).toString());
         break;
