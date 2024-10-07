@@ -179,8 +179,20 @@ public class Server extends WebSocketServer {
       case START_GAME:
         // TODO: Handle game start
         // TODO: check if both players are ready
+        // TODO: send ack message
+        // TODO: send Start_game to invited player
         break;
-      // TODO: Handle Game related message types ()
+      case PUT_SHIPS:
+        // TODO: Handle put ships message
+        // TODO: Send ack message
+        // TODO: Send starting player message when both players have placed their ships
+        break;
+      case PLAY_MOVE:
+        // TODO: Handle play move message
+        // TODO: Send hit result message
+        // TODO: Send pass turn message to the other player if missed
+        // TODO: Send end game message when all ships are sunk
+        break;
       default:
         player.sendMessage(new ErrorMessage("Invalid message type", type).toString());
         break;
