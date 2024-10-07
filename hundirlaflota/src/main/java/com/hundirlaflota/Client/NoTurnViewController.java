@@ -1,5 +1,19 @@
 package com.hundirlaflota.Client;
 
-public class NoTurnViewController {
-    
+import java.net.URL;
+import java.util.ResourceBundle;
+
+import javafx.fxml.Initializable;
+
+public class NoTurnViewController implements Initializable, OnSceneVisible {
+
+    @Override
+    public void onSceneVisible() {
+
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+
+    }
 }

@@ -45,7 +45,7 @@ public class UtilsWS  extends WebSocketClient {
 
     @Override
     public void onMessage(String message) {
-        System.out.println("Received message: " + message);
+        //System.out.println("Received message: " + message);
         if (onMessageCallBack != null) {
             onMessageCallBack.accept(message);
         }

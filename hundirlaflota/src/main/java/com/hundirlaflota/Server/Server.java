@@ -40,11 +40,26 @@ public class Server extends WebSocketServer {
     if (player != null) {
       players.remove(player);
     }
+    Room room = player.getRoom();
+    if (room == null) {
+      return;
+    }
+    if (room.isHost(player)) {
+      if (room.getInvite() == null) {
+        rooms.remove(room);
+      }
+      else {
+        room.PromoteInvite();
+      }
+    }
+    else {
+      room.removePlayer(player);
+    }
   }
 
   @Override
   public void onMessage(WebSocket conn, String message) {
-    System.out.println("Received message: " + message);
+    //System.out.println("Received message: " + message);
     Player player = getPlayerByConn(conn);
     JSONObject json = new JSONObject(message);
     MessageType type;
@@ -98,8 +113,10 @@ public class Server extends WebSocketServer {
             break;
           }
         }
+        //TODO: Check if roomName is not empty
         Room room = new Room(player, roomName);
         rooms.add(room);
+        player.setRoom(room);
         player.sendMessage(new AckMessage("", MessageType.CREATE_ROOM).toString());
         break;
       case JOIN_ROOM:
@@ -116,32 +133,54 @@ public class Server extends WebSocketServer {
           player.sendMessage(new ErrorMessage("Room not found", MessageType.JOIN_ROOM).toString());
           break;
         }
+        player.setRoom(room2);
         player.sendMessage(new AckMessage("", MessageType.JOIN_ROOM).toString());
         break;
+      case ROOM_INFO:
+        Room playerRoom = player.getRoom();
+        JSONObject roomInfo = playerRoom.toJSON();
+        roomInfo.put("isHost", playerRoom.isHost(player));
+        if (playerRoom != null) {
+          player.sendMessage(new AckMessage(roomInfo.toString(), MessageType.ROOM_INFO,false).toString());
+        }
+        else {
+          player.sendMessage(new ErrorMessage("You are not in a room", MessageType.ROOM_INFO).toString());
+        }
+        break;
       case LEAVE_ROOM:
-        if (player.getRoom() != null) {
-          if (player.getRoom().isHost(player)) {
-            // TODO: Handle host leaving
-            break;
+        if (player.getRoom() == null)  {
+          player.sendMessage(new ErrorMessage("You are not in a room", MessageType.LEAVE_ROOM).toString());
+        }
+        if (player.getRoom().isHost(player)) {
+          if (player.getRoom().getInvite() == null) {
+            rooms.remove(player.getRoom());
           }
           else {
-            player.getRoom().removePlayer(player);
+            player.getRoom().PromoteInvite();
           }
         }
+        else {
+          player.getRoom().removePlayer(player);
+        }
+        player.setRoom(null);
         player.sendMessage(new AckMessage("", MessageType.LEAVE_ROOM).toString());
         break;
       case SET_READY:
-        player.getRoom().setReady(player);
-        player.sendMessage(new AckMessage("", MessageType.SET_READY).toString());
-        if (player.getRoom().isReady(player)) {
-          player.getRoom().getHost().sendMessage(new StartingPlayerMessage(true).toString());
-          player.getRoom().getInvite().sendMessage(new StartingPlayerMessage(false).toString());
-          // TODO: Start game in the server on the room
-          // TODO: Make the Game class 
-          break;
+        System.out.println("SET_READY" + json.toString());
+        boolean ready = json.getBoolean("ready");
+        if (player.getRoom() != null) {
+          player.getRoom().setReady(player, ready);
+          player.sendMessage(new AckMessage("", MessageType.SET_READY).toString());
+        }
+        else {
+          player.sendMessage(new ErrorMessage("You are not in a room", MessageType.SET_READY).toString());
         }
         break;
-      // TODO: Handle Game related message types
+      case START_GAME:
+        // TODO: Handle game start
+        // TODO: check if both players are ready
+        break;
+      // TODO: Handle Game related message types ()
       default:
         player.sendMessage(new ErrorMessage("Invalid message type", type).toString());
         break;

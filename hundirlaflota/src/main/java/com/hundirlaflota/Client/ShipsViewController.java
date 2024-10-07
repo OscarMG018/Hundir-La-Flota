@@ -1,5 +1,7 @@
 package com.hundirlaflota.Client;
 
-public class ShipsViewController {
+import javafx.fxml.Initializable;
+
+public class ShipsViewController implements Initializable, OnSceneVisible {
     
 }

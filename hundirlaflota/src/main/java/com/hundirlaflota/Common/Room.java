@@ -35,7 +35,11 @@ public class Room implements Serializable {
    public JSONObject toJSON() {
       return new JSONObject()
             .put("name", name)
-            .put("players", getPlayerCount());
+            .put("players", getPlayerCount())
+            .put("hostName", host.getName())
+            .put("inviteName", invite != null ? invite.getName() : "")
+            .put("hostReady", hostReady)
+            .put("inviteReady", inviteReady);
    }
 
    public String getName() {
@@ -46,12 +50,12 @@ public class Room implements Serializable {
       this.name = name;
    }
 
-   public void setReady(Player player) {
+   public void setReady(Player player, boolean ready) {
       if (player == host) {
-         hostReady = true;
+         hostReady = ready;
       }
       else {
-         inviteReady = true;
+         inviteReady = ready;
       }
    }
 
@@ -102,5 +106,10 @@ public class Room implements Serializable {
 
    public boolean isInvite(Player player) {
       return invite == player;
+   }
+
+   public void PromoteInvite() {
+      host = invite;
+      invite = null;
    }
 }

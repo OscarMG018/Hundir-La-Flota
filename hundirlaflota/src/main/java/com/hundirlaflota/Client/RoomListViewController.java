@@ -12,6 +12,32 @@ import org.json.*;
 import com.hundirlaflota.Common.ServerMessages.*;
 import javafx.application.Platform;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+class UpdateRoomList implements Runnable {
+    private UtilsWS ws;
+    private AtomicBoolean running = new AtomicBoolean(true);
+    public static final int UPDATE_INTERVAL = 200;
+
+    public UpdateRoomList(UtilsWS ws) {
+        this.ws = ws;
+    }
+
+    public void run() {
+        while (running.get()) {
+            ws.safeSend(new ListRoomsMessage().toString());
+            try {
+                Thread.sleep(UPDATE_INTERVAL);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void stop() {
+        running.set(false);
+    }
+}
 
 class RoomUI {
     private String name;
@@ -49,6 +75,12 @@ public class RoomListViewController implements Initializable, OnSceneVisible {
     private Button CreateRoomButton;
 
     private UtilsWS ws;
+    private UpdateRoomList updateRoomList;
+
+
+    public UpdateRoomList getUpdateThread() {
+        return updateRoomList;
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -62,6 +94,9 @@ public class RoomListViewController implements Initializable, OnSceneVisible {
     public void onSceneVisible() {
         ws.setOnMessage(this::handleListRoomsMessage);
         ws.safeSend(new ListRoomsMessage().toString());
+        updateRoomList = new UpdateRoomList(ws);
+        Thread updateRoomListThread = new Thread(updateRoomList);
+        updateRoomListThread.start();
     }
 
     public void handleListRoomsMessage(String message) {
@@ -74,22 +109,26 @@ public class RoomListViewController implements Initializable, OnSceneVisible {
                 if (rooms.length() == 0) {
                     System.out.println("No rooms found");
                     Platform.runLater(() -> {
+                        RoomsVBox.getChildren().clear();
                         RoomsVBox.getChildren().add(new Label("No rooms found"));
                     });
                 }
                 for (int i = 0; i < rooms.length(); i++) {
                     JSONObject room = rooms.getJSONObject(i);
                     Platform.runLater(() -> {
+                        RoomsVBox.getChildren().clear();
                         RoomsVBox.getChildren().add(new RoomUI(room.getString("name"), room.getInt("players")).getUI());
                     });
                 }
             }
             else if (requestType == MessageType.CREATE_ROOM) {
+                updateRoomList.stop();
                 Platform.runLater(() -> {
                     UtilsViews.setView("Room");
                 });
             }
             else if (requestType == MessageType.JOIN_ROOM) {
+                updateRoomList.stop();
                 Platform.runLater(() -> {
                     UtilsViews.setView("Room");
                 });
@@ -97,7 +136,6 @@ public class RoomListViewController implements Initializable, OnSceneVisible {
         } else if (type == MessageType.ERROR) {
             System.out.println("Error: " + json.getString("message"));//TODO: Show error in the UI 
         }
-        //TODO: handle room updates messages (maybe a refresh button)
     }
 
     public void CreateRoom() {

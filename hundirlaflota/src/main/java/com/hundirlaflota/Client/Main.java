@@ -22,6 +22,19 @@ public class Main extends Application {
         UtilsViews.setView("Login");
         Scene scene = new Scene(UtilsViews.parentContainer);
         primaryStage.setScene(scene);
+        primaryStage.setTitle("Hundir la Flota");
+        primaryStage.setOnCloseRequest(event -> {
+            RoomListViewController c1 = (RoomListViewController) UtilsViews.getController("RoomList");
+            RoomViewController c2 = (RoomViewController) UtilsViews.getController("Room");
+            if (c1.getUpdateThread() != null) {
+                c1.getUpdateThread().stop();
+            }
+            if (c2.getUpdateThread() != null) {
+                c2.getUpdateThread().stop();
+            }
+            UtilsWS.getSharedInstance(location).close();
+            System.out.println("Closing connection");
+        });
         primaryStage.show();
     }
 }
