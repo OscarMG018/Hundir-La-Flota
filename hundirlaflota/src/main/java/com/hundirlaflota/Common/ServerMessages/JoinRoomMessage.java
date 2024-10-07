@@ -1,21 +1,19 @@
 package com.hundirlaflota.Common.ServerMessages;
 
-import com.hundirlaflota.Common.Room;
-
 public class JoinRoomMessage extends ServerMessage {
 
-    private Room room;
+    private String roomName = "";
 
-    public JoinRoomMessage(Room room) {
+    public JoinRoomMessage(String roomName) {
         this.type = MessageType.JOIN_ROOM;
-        this.room = room;
+        this.roomName = roomName;
     }
 
     @Override
     public String toString() {
         return "{" +
                 "type:\"" + type.toString() + "\"" +
-                ", room:\"" + room.toString() + "\"" +
+                ", roomName:\"" + roomName + "\"" +
                 "}";
     }
 }

@@ -15,8 +15,8 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         UtilsViews.addView(Main.class, "Login", "/layout_login.fxml", "/style_login.css");
         UtilsViews.addView(Main.class, "RoomList", "/layout_room_list.fxml", "/style_room_list.css");
-        /*UtilsViews.addView(Main.class, "Room", "/layout_room.fxml", "/style_room.css");
-        UtilsViews.addView(Main.class, "Ships", "/layout_ships.fxml", "/style_ships.css");
+        UtilsViews.addView(Main.class, "Room", "/layout_room.fxml", "/style_room.css");
+        /*UtilsViews.addView(Main.class, "Ships", "/layout_ships.fxml", "/style_ships.css");
         UtilsViews.addView(Main.class, "Turn", "/layout_turn.fxml", "/style_turn.css");
         UtilsViews.addView(Main.class, "NoTurn", "/layout_no_turn.fxml", "/style_no_turn.css");*/
         UtilsViews.setView("Login");

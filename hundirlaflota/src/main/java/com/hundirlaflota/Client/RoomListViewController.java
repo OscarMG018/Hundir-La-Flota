@@ -11,7 +11,6 @@ import java.util.ResourceBundle;
 import org.json.*;
 import com.hundirlaflota.Common.ServerMessages.*;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import java.util.Optional;
 
 class RoomUI {
@@ -34,7 +33,7 @@ class RoomUI {
         Button joinButton = new Button("Join");
         joinButton.getStyleClass().add("room-join-button");
         joinButton.setOnAction(event -> {
-            //TODO: Join the room
+            UtilsWS.getSharedInstance(Main.location).safeSend(new JoinRoomMessage(name).toString());
         });
         hbox.getChildren().addAll(nameLabel, playersLabel, joinButton);
         hbox.getStyleClass().add("room-container");
@@ -86,13 +85,19 @@ public class RoomListViewController implements Initializable, OnSceneVisible {
                 }
             }
             else if (requestType == MessageType.CREATE_ROOM) {
-                System.out.println("Room created");//TODO: Show in the UI
+                Platform.runLater(() -> {
+                    UtilsViews.setView("Room");
+                });
+            }
+            else if (requestType == MessageType.JOIN_ROOM) {
+                Platform.runLater(() -> {
+                    UtilsViews.setView("Room");
+                });
             }
         } else if (type == MessageType.ERROR) {
             System.out.println("Error: " + json.getString("message"));//TODO: Show error in the UI 
         }
         //TODO: handle room updates messages (maybe a refresh button)
-        //TODO: handle room creation messages
     }
 
     public void CreateRoom() {
@@ -112,7 +117,6 @@ public class RoomListViewController implements Initializable, OnSceneVisible {
         if (result.isPresent()) {
             ws.safeSend(new CreateRoomMessage(result.get()).toString());
         }
-        //TODO: Update the room list to show the new room
     }
         
         
