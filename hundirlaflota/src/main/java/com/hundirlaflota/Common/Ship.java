@@ -5,7 +5,8 @@ import java.util.Collections;
 
 enum ShipPosition {
     HORIZONTAL,
-    VERTICAL
+    VERTICAL,
+    ESTADO
 }
 
 public class Ship {
@@ -14,6 +15,7 @@ public class Ship {
     Position position;
     ShipPosition shipPosition;
     ArrayList<Boolean> hits;
+
 
     public Ship(String name, int size, Position position, ShipPosition shipPosition) {
         this.name = name;
@@ -25,9 +27,9 @@ public class Ship {
 
     public boolean HasPosition(Position position) {
         if (shipPosition == ShipPosition.HORIZONTAL) {
-            return this.position.x >= position.x-size && this.position.x <= position.x && this.position.y == position.y;
+            return this.position.x >= position.x - size && this.position.x <= position.x && this.position.y == position.y;
         } else {
-            return this.position.y >= position.y-size && this.position.y <= position.y && this.position.x == position.x;
+            return this.position.y >= position.y - size && this.position.y <= position.y && this.position.x == position.x;
         }
     }
 }
