@@ -30,23 +30,4 @@ public class Ship {
             return this.position.y >= position.y-size && this.position.y <= position.y && this.position.x == position.x;
         }
     }
-
-    public void hit(Position position) {
-        int index = -1;
-        if (shipPosition == ShipPosition.HORIZONTAL) {
-            index = position.x - this.position.x;
-        } else {
-            index = position.y - this.position.y;
-        }
-        hits.set(index, true);
-    }
-
-    public boolean isSunk() {
-        for (boolean hit : hits) {
-            if (!hit) {
-                return false;
-            }
-        }
-        return true;
-    }
 }

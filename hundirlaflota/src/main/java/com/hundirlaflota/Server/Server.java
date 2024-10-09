@@ -176,28 +176,7 @@ public class Server extends WebSocketServer {
           player.sendMessage(new ErrorMessage("You are not in a room", MessageType.SET_READY).toString());
         }
         break;
-      case START_GAME:
-        // TODO: Handle game start
-        // TODO: check if both players are ready
-        // TODO: send ack message
-        // TODO: send Start_game to invited player
-        break;
-      case PUT_SHIPS:
-        // TODO: Handle put ships message
-        // TODO: Send ack message
-        // TODO: Send starting player message when both players have placed their ships
-        break;
-      case PLAY_MOVE:
-        // TODO: Handle play move message
-        // TODO: Send hit result message
-        // TODO: Send pass turn message to the other player if missed
-        // TODO: Send end game message when all ships are sunk
-        break;
-      case MOUSE_POSITION:
-        // TODO: Handle mouse position message
-        // TODO: Send ack message
-        // TODO: Send MousePosition message to the other player
-        break;
+      //TODO: Add cases for the game messages
       default:
         player.sendMessage(new ErrorMessage("Invalid message type", type).toString());
         break;
