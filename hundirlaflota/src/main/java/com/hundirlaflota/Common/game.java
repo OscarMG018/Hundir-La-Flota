@@ -27,6 +27,22 @@ public class Game {
         this.shipsPlayer2 = shipsPlayer2;
     }
 
+    public static void modifyJson(String jsonFileName, String key, String newValue) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            File jsonFile = new File(jsonFileName);
+            JsonNode rootNode = objectMapper.readTree(jsonFile);
+            if (rootNode.has(key)) {
+                ((ObjectNode) rootNode).put(key, newValue);
+                objectMapper.writeValue(jsonFile, rootNode);
+                System.out.println("Se ha modificado '" + key + "' a: " + newValue);
+            } else {
+                System.out.println("La clave '" + key + "' no existe, inútil.");
+            }
+        } catch (IOException e) {
+            System.out.println("Error! Error!: " + e.getMessage());
+        }
+    }
     public void gameActions() {
     }
 }
