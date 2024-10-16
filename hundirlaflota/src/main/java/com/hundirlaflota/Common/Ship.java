@@ -18,6 +18,7 @@ public class Ship {
     ShipPosition shipPosition;
     ArrayList<Boolean> hits;
 
+
     public Ship(String name, int size, Position position, ShipPosition shipPosition) {
         this.name = name;
         this.size = size;
@@ -31,11 +32,9 @@ public class Ship {
         //size = 5
         //position = (5,0)
         if (shipPosition == ShipPosition.HORIZONTAL) {
-            //0 >= 0 && 0 <= 5 && 0 == 0
-            return this.position.getX() > position.getX()-size && this.position.getX() <= position.getX() && this.position.getY() == position.getY();
+            return this.position.x >= position.x-size && this.position.x <= position.x && this.position.y == position.y;
         } else {
-            //0 >= 0-5 && 0 <= 0 && 0 == 0
-            return this.position.getY() >  position.getY()-size && this.position.getY() <= position.getY() && this.position.getX() == position.getX();
+            return this.position.y >= position.y-size && this.position.y <= position.y && this.position.x == position.x;
         }
     }
 }
