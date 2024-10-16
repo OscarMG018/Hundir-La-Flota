@@ -3,12 +3,15 @@ package com.hundirlaflota.Common;
 import java.util.ArrayList;
 import java.util.Collections;
 
-enum ShipPosition {
-    HORIZONTAL,
-    VERTICAL
-}
+
 
 public class Ship {
+
+    public enum ShipPosition {
+        HORIZONTAL,
+        VERTICAL
+    }
+
     String name;
     int size;
     Position position;
@@ -24,10 +27,15 @@ public class Ship {
     }
 
     public boolean HasPosition(Position position) {
+        //this.position = (0,0)
+        //size = 5
+        //position = (5,0)
         if (shipPosition == ShipPosition.HORIZONTAL) {
-            return this.position.x >= position.x-size && this.position.x <= position.x && this.position.y == position.y;
+            //0 >= 0 && 0 <= 5 && 0 == 0
+            return this.position.getX() > position.getX()-size && this.position.getX() <= position.getX() && this.position.getY() == position.getY();
         } else {
-            return this.position.y >= position.y-size && this.position.y <= position.y && this.position.x == position.x;
+            //0 >= 0-5 && 0 <= 0 && 0 == 0
+            return this.position.getY() >  position.getY()-size && this.position.getY() <= position.getY() && this.position.getX() == position.getX();
         }
     }
 }
