@@ -34,4 +34,20 @@ public class Ship {
             return this.position.getY() > position.getY()-size && this.position.getY() <= position.getY() && this.position.getX() == position.getX();
         }
     }
+
+    public Position getPosition() {
+        return position;
+    }
+
+    public ShipPosition getShipPosition() {
+        return shipPosition;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public String getName() {
+        return name;
+    }
 }
