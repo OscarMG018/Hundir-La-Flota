@@ -28,13 +28,10 @@ public class Ship {
     }
 
     public boolean HasPosition(Position position) {
-        //this.position = (0,0)
-        //size = 5
-        //position = (5,0)
         if (shipPosition == ShipPosition.HORIZONTAL) {
-            return this.position.x >= position.x-size && this.position.x <= position.x && this.position.y == position.y;
+            return this.position.getX() > position.getX()-size && this.position.getX() <= position.getX() && this.position.getY() == position.getY();
         } else {
-            return this.position.y >= position.y-size && this.position.y <= position.y && this.position.x == position.x;
+            return this.position.getY() > position.getY()-size && this.position.getY() <= position.getY() && this.position.getX() == position.getX();
         }
     }
 }
