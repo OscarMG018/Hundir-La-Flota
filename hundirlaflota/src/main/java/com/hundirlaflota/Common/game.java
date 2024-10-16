@@ -1,5 +1,11 @@
 package com.hundirlaflota.Common;
 import java.util.ArrayList;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import java.io.File;
+import java.io.IOException;
+
 
 public class Game {
     private ArrayList<String> shipsPlayer1;
@@ -43,6 +49,31 @@ public class Game {
             System.out.println("Error! Error!: " + e.getMessage());
         }
     }
+
+
+    public static void createJson(String jsonFileName, String playerName) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode rootNode = objectMapper.createObjectNode();
+
+        for (char ch = 'a'; ch <= 'j'; ch++) {
+            for (int num = 1; num <= 10; num++) {
+                String key = ch + String.valueOf(num);
+                rootNode.put(key, "");  
+            }
+        }
+
+        rootNode.put("playerPosition", "");
+        rootNode.put("playerName", playerName);
+
+        try {
+            objectMapper.writeValue(new File(jsonFileName), rootNode);
+            System.out.println("Archivo creado: " + jsonFileName);
+        } catch (IOException e) {
+            System.out.println("Error al escribir en el archivo: " + e.getMessage());
+        }
+    }
+
+
     public void gameActions() {
     }
 }
