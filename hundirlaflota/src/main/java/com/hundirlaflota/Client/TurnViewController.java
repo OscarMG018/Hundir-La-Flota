@@ -29,7 +29,6 @@ public class TurnViewController implements Initializable, OnSceneVisible {
     @FXML
     private Canvas canvas;
 
-
     private UtilsWS ws;
     @Override
     public void onSceneVisible() {

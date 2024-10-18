@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 
 public class ShipsViewController implements Initializable, OnSceneVisible {
 
+
     @Override
     public void onSceneVisible() {
 
