@@ -46,12 +46,9 @@ public class Game {
             if (rootNode.has(key)) {
                 ((ObjectNode) rootNode).put(key, newValue);
                 objectMapper.writeValue(jsonFile, rootNode);
-                System.out.println("Se ha modificado '" + key + "' a: " + newValue);
             } else {
-                System.out.println("La clave '" + key + "' no existe, inútil.");
             }
         } catch (IOException e) {
-            System.out.println("Error! Error!: " + e.getMessage());
         }
     }
 
@@ -71,9 +68,7 @@ public class Game {
         rootNode.put("playerName", playerName);
         try {
             objectMapper.writeValue(new File(jsonFileName), rootNode);
-            System.out.println("Archivo creado: " + jsonFileName);
         } catch (IOException e) {
-            System.out.println("Error al escribir en el archivo: " + e.getMessage());
         }
     }
 
@@ -133,5 +128,71 @@ public class Game {
     
     public void gameActions() {
     }
+
+    public static boolean putShip(String player, String coordinate, String ship, boolean isVertical) {
+        String jsonFileName = player.equals("player1") ? "player2.json" : "player1.json";
+        int shipSize;
+        switch (ship.toLowerCase()) {
+            case "aircraft carrier":
+                shipSize = 5;
+                break;
+            case "battleship":
+                shipSize = 4;
+                break;
+            case "cruiser":
+                shipSize = 3;
+                break;
+            case "submarine":
+                shipSize = 3;
+                break;
+            case "destroyer":
+                shipSize = 2;
+                break;
+            default:
+                return false;
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            File jsonFile = new File(jsonFileName);
+            JsonNode rootNode = objectMapper.readTree(jsonFile);
+            char row = coordinate.charAt(0);
+            int col = Integer.parseInt(coordinate.substring(1));
+
+            if (isVertical) {
+                if (row + shipSize - 1 > 'j') {
+                    return false;
+                }
+                for (int i = 0; i < shipSize; i++) {
+                    String coordToCheck = "" + (char) (row + i) + col;
+                    if (!rootNode.get(coordToCheck).asText().isEmpty()) {
+                        return false;
+                    }
+                }
+                for (int i = 0; i < shipSize; i++) {
+                    String coordToPlace = "" + (char) (row + i) + col;
+                    ((ObjectNode) rootNode).put(coordToPlace, ship);
+                }
+            } else {
+                if (col + shipSize - 1 > 10) {
+                    return false;
+                }
+                for (int i = 0; i < shipSize; i++) {
+                    String coordToCheck = "" + row + (col + i);
+                    if (!rootNode.get(coordToCheck).asText().isEmpty()) {
+                        return false;
+                    }
+                }
+                for (int i = 0; i < shipSize; i++) {
+                    String coordToPlace = "" + row + (col + i);
+                    ((ObjectNode) rootNode).put(coordToPlace, ship);
+                }
+            }
+            objectMapper.writeValue(jsonFile, rootNode);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
 }
 
