@@ -8,21 +8,23 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.application.Platform;
 import javafx.scene.image.Image;
 
 import com.hundirlaflota.Common.*;
 import java.util.ArrayList;
+
+import java.util.concurrent.*;
+
 public class TurnViewController implements Initializable, OnSceneVisible {
 
 
     private final int CELL_SIZE = 30;
     private final int GRID_SIZE = 10;
-    private final int BORDER_SIZE = 2;
+    private final int BORDER_SIZE = 1;
     private final int SHIP_PADDING = 5;
 
-    private ArrayList<Position> opponentsAttacks = new ArrayList<>();
-    private ArrayList<Ship> myShips = new ArrayList<>();
+    private ObservableCollection<Position> opponentsAttacks = new ObservableCollection<>(new ArrayList<Position>());
+    private ObservableCollection<Ship> myShips = new ObservableCollection<>(new ArrayList<Ship>());
 
     @FXML
     private Canvas canvas;
@@ -32,6 +34,30 @@ public class TurnViewController implements Initializable, OnSceneVisible {
     @Override
     public void onSceneVisible() {
         drawGrid();
+        //TEST:
+        myShips.add(new Ship("Destroyer", 5, new Position(2, 2), Ship.ShipPosition.VERTICAL));
+        myShips.add(new Ship("Destroyer", 4, new Position(2, 2), Ship.ShipPosition.VERTICAL));
+        myShips.add(new Ship("Destroyer", 3, new Position(2, 2), Ship.ShipPosition.VERTICAL));
+        myShips.add(new Ship("Destroyer", 3, new Position(2, 2), Ship.ShipPosition.VERTICAL));
+        myShips.add(new Ship("Destroyer", 3, new Position(2, 2), Ship.ShipPosition.VERTICAL));
+        myShips.add(new Ship("Destroyer", 2, new Position(2, 2), Ship.ShipPosition.VERTICAL));
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            try {
+                for (int i = 0; i < 20; i++) {
+                    Thread.sleep(1000);
+                    int x = (int) (Math.random() * GRID_SIZE);
+                    int y = (int) (Math.random() * GRID_SIZE);
+                    opponentsAttacks.add(new Position(x, y));
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            
+        });
+        //TEST:
+        opponentsAttacks.add(new Position(2, 2));//already attacked
+
     }
     
     @Override
@@ -40,22 +66,18 @@ public class TurnViewController implements Initializable, OnSceneVisible {
         //We change the size of the canvas so it is centered
         canvas.setWidth(GRID_SIZE * CELL_SIZE + BORDER_SIZE*(GRID_SIZE+1));
         canvas.setHeight(GRID_SIZE * CELL_SIZE + BORDER_SIZE*(GRID_SIZE+1));
-        //TEST:
-        opponentsAttacks.add(new Position(0, 0));
-        opponentsAttacks.add(new Position(1, 1));
-        opponentsAttacks.add(new Position(2, 2));
-        opponentsAttacks.add(new Position(2, 1));
-        //TEST:
-        myShips.add(new Ship("Aircraft Carrier", 5, new Position(2, 2), Ship.ShipPosition.VERTICAL));
-        //myShips.add(new Ship("Battleship", 4, new Position(1, 1), Ship.ShipPosition.HORIZONTAL));
-        //myShips.add(new Ship("Destroyer", 3, new Position(2, 2), Ship.ShipPosition.HORIZONTAL));
-        //myShips.add(new Ship("Submarine", 3, new Position(3, 3), Ship.ShipPosition.HORIZONTAL));
-        //myShips.add(new Ship("Patrol Boat", 2, new Position(4, 4), Ship.ShipPosition.HORIZONTAL));
-
+        //SET LISTENERS
+        opponentsAttacks.addCollectionAddListener(event -> {
+            drawGrid();
+        });
+        myShips.addCollectionAddListener(event -> {
+            drawGrid();
+        });
     }
 
     void drawGrid() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         //Draw opponents attacks
         for (Position pos : opponentsAttacks) {
             if (myShips.stream().anyMatch(ship -> ship.HasPosition(pos))) {
@@ -74,7 +96,6 @@ public class TurnViewController implements Initializable, OnSceneVisible {
         //Draw my ships
         //TODO: draw ships in the right places
         for (Ship ship : myShips) {
-            System.out.println(ship.getName());
             Image image = new Image(getClass().getResourceAsStream("/images/" + ship.getName() + ".png"));
             drawShipImage(gc, ship.getPosition(), image, ship);
         }

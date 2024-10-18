@@ -35,6 +35,21 @@ public class Ship {
         }
     }
 
+    public boolean isSunk(ArrayList<Position> attacks) {
+        ArrayList<Position> attackedPositions = new ArrayList<Position>();
+        int hits = 0;
+        for (Position pos : attacks) {
+            if (attackedPositions.stream().anyMatch(p -> p.getX() == pos.getX() && p.getY() == pos.getY())) {
+                continue;
+            }
+            if (HasPosition(pos)) {
+                attackedPositions.add(pos);
+                hits++;
+            }
+        }
+        return hits == size;
+    }
+
     public Position getPosition() {
         return position;
     }
