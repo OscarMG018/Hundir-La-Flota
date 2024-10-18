@@ -11,6 +11,9 @@ public class ShipCanvasObject extends CanvasObject {
 
     public Ship ship;
     public boolean draggable;
+    public boolean isDragging;
+    private double dragOffsetX;
+    private double dragOffsetY;
 
     public ShipCanvasObject(Ship ship, boolean draggable) {
         this.ship = ship;
@@ -20,18 +23,28 @@ public class ShipCanvasObject extends CanvasObject {
     @Override
     public void draw(GraphicsContext gc) {
         Image image = new Image(getClass().getResourceAsStream("/ship.png"));
-        gc.drawImage(image, ship.getPosition().getX() * 30, ship.getPosition().getY() * 30, 30, 30);
+        if (isDragging) {
+            gc.drawImage(image, event.getX() - dragOffsetX, event.getY() - dragOffsetY, 30, 30);
+        }
+        else {
+            gc.drawImage(image, ship.getPosition().getX() * 30, ship.getPosition().getY() * 30, 30, 30);
+        }
     }
 
     @Override
     public void OnDragStart(MouseDragEvent event) {
         if (draggable) {
-            // Store the initial mouse position relative to the ship's position
-            double initialMouseX = event.getX() - ship.getPosition().getX() * 30;
-            double initialMouseY = event.getY() - ship.getPosition().getY() * 30;
-            // Calculate the new position based on the mouse movement
-            int newX = (int) ((event.getX() - initialMouseX) / 30);
-            int newY = (int) ((event.getY() - initialMouseY) / 30);
+            dragOffsetX = event.getX() - ship.getPosition().getX() * 30;
+            dragOffsetY = event.getY() - ship.getPosition().getY() * 30;
+        }
+    }
+
+    @Override
+    public void OnDrag(MouseDragEvent event) {
+        if (draggable) {
+            double newX = (event.getX() - dragOffsetX) / 30;
+            double newY = (event.getY() - dragOffsetY) / 30;
+            ship.setPosition(new Position((int)newX, (int)newY));
         }
     }
 }
