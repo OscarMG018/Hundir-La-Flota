@@ -2,6 +2,7 @@ package com.hundirlaflota.Client.Canvas;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.MouseDragEvent;
 
 public abstract class CanvasObject {
 
@@ -13,11 +14,11 @@ public abstract class CanvasObject {
 
     public void OnMouseExit(MouseEvent event) {}
 
-    public void OnDragStart(MouseEvent event) {}
+    public void OnDragStart(MouseDragEvent event) {}
 
-    public void OnDragEnd(MouseEvent event) {}
+    public void OnDragEnd(MouseDragEvent event) {}
 
-    public void OnDrag(MouseEvent event) {}
+    public void OnDrag(MouseDragEvent event) {}
 
-    public void OnDrop(MouseEvent event, Object source) {} 
+    public void OnDrop(MouseDragEvent event, Object source) {} 
 }
