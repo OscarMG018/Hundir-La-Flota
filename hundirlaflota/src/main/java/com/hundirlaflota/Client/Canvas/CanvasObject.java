@@ -92,6 +92,10 @@ public abstract class CanvasObject {
         return zIndex;
     }
 
+    public void setzIndex(int zIndex) {
+        this.zIndex = zIndex;
+    }
+
     public void setPosition(double x, double y) {
         this.x = x - width / 2;
         this.y = y - height / 2;
