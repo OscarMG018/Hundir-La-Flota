@@ -1,4 +1,4 @@
-package com.hundirlaflota.Client;
+package com.hundirlaflota.Client.ViewControllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -9,9 +9,11 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import org.json.JSONObject;
 
+import com.hundirlaflota.Client.Main;
 import com.hundirlaflota.Common.ServerMessages.*;
+import com.hundirlaflota.Client.Utils.*;
 
-public class LoginVIewController implements Initializable, OnSceneVisible {
+public class LoginViewController implements Initializable, OnSceneVisible {
     @FXML
     private TextField LoginTextField;
     @FXML

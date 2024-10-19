@@ -1,4 +1,4 @@
-package com.hundirlaflota.Client;
+package com.hundirlaflota.Client.ViewControllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -9,35 +9,13 @@ import javafx.scene.control.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 import org.json.*;
+
+import com.hundirlaflota.Client.Main;
 import com.hundirlaflota.Common.ServerMessages.*;
 import javafx.application.Platform;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-class UpdateRoomList implements Runnable {
-    private UtilsWS ws;
-    private AtomicBoolean running = new AtomicBoolean(true);
-    public static final int UPDATE_INTERVAL = 200;
-
-    public UpdateRoomList(UtilsWS ws) {
-        this.ws = ws;
-    }
-
-    public void run() {
-        while (running.get()) {
-            ws.safeSend(new ListRoomsMessage().toString());
-            try {
-                Thread.sleep(UPDATE_INTERVAL);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void stop() {
-        running.set(false);
-    }
-}
+import com.hundirlaflota.Client.Utils.*;
 
 class RoomUI {
     private String name;
