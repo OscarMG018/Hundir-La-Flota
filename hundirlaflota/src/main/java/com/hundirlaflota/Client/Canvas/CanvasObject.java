@@ -13,6 +13,7 @@ public abstract class CanvasObject {
     protected double height;
     protected int zIndex;
     protected ArrayList<CanvasObject> children = new ArrayList<>();
+    protected boolean isDraggable = false;
 
     public CanvasObject(double x, double y, double width, double height, int zIndex) {
         this.x = x;

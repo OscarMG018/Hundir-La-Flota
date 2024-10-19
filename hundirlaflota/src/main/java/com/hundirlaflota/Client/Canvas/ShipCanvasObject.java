@@ -9,7 +9,6 @@ import javafx.scene.paint.Color;
 
 public class ShipCanvasObject extends CanvasObject {
 
-    boolean Draggable;
     private String ShipName;
     private double XOffset;
     private double YOffset;
@@ -18,11 +17,11 @@ public class ShipCanvasObject extends CanvasObject {
     private boolean dragging;
     private double cellSize;
 
-    public ShipCanvasObject(String ShipName, double X, double Y, double cellSize, int size, int zIndex, boolean Draggable, boolean horizontal) {
+    public ShipCanvasObject(String ShipName, double X, double Y, double cellSize, int size, int zIndex, boolean isDraggable, boolean horizontal) {
         super(X, Y, horizontal ? cellSize * size : cellSize, horizontal ? cellSize : cellSize * size, zIndex);
         this.size = size;
         this.ShipName = ShipName;
-        this.Draggable = Draggable;
+        this.isDraggable = isDraggable;
         this.horizontal = horizontal;
         this.cellSize = cellSize;
     }
@@ -65,7 +64,7 @@ public class ShipCanvasObject extends CanvasObject {
 
     @Override
     public void OnDragStart(MouseEvent event) {
-        if (Draggable) {
+        if (isDraggable) {
             dragging = true;
             XOffset = event.getX() - x;
             YOffset = event.getY() - y;
@@ -74,7 +73,7 @@ public class ShipCanvasObject extends CanvasObject {
 
     @Override
     public void OnDrag(MouseEvent event) {
-        if (Draggable) {
+        if (isDraggable) {
             x = event.getX() - XOffset;
             y = event.getY() - YOffset;
         }
