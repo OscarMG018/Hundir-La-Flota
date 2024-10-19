@@ -1,9 +1,9 @@
-package com.hundirlaflota.Client;
+package com.hundirlaflota.Client.ViewControllers;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.hundirlaflota.Client.Main;
 import com.hundirlaflota.Common.ServerMessages.*;
 
 import javafx.fxml.Initializable;
@@ -13,32 +13,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
-
-class UpdateRoomInfo implements Runnable {
-    private AtomicBoolean running;
-    public static final int UPDATE_INTERVAL = 200;
-    private UtilsWS ws;
-
-    public UpdateRoomInfo() {
-        this.ws = UtilsWS.getSharedInstance(Main.location);
-    }
-
-    public void run() {
-        running = new AtomicBoolean(true);
-        while (running.get()) {
-            ws.safeSend(new RoomInfoMessage().toString());
-            try {
-                Thread.sleep(UPDATE_INTERVAL);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void stop() {
-        running.set(false);
-    }
-}
+import com.hundirlaflota.Client.Utils.*;
 
 public class RoomViewController implements Initializable,OnSceneVisible {
 

@@ -1,7 +1,7 @@
 package com.hundirlaflota.Client.Utils;
 import java.util.ArrayList;
 
-import com.hundirlaflota.Client.OnSceneVisible;
+import com.hundirlaflota.Client.ViewControllers.OnSceneVisible;
 
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;

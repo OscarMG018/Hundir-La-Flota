@@ -1,4 +1,4 @@
-package com.hundirlaflota.Client.Utils;
+package com.hundirlaflota.Client.Utils.Observable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -6,62 +6,6 @@ import java.util.List;
 import java.util.stream.Stream;
 import java.util.Collection;
 
-
-interface CollectionAddListener<T> {
-    void onCollectionAdd(CollectionAddEvent<T> event);
-}
-
-interface CollectionRemoveListener<T> {
-    void onCollectionRemove(CollectionRemoveEvent<T> event);
-}
-
-class CollectionAddEvent<T> extends PropertyEvent<T> {
-    private Collection<T> oldCollection;
-    private Collection<T> newCollection;
-    private T addedValue;
-
-    public CollectionAddEvent(Collection<T> oldCollection, Collection<T> newCollection, T addedValue) {
-        this.oldCollection = oldCollection;
-        this.newCollection = newCollection;
-        this.addedValue = addedValue;
-    }
-
-    public Collection<T> getOldCollection() {
-        return oldCollection;
-    }
-
-    public Collection<T> getNewCollection() {
-        return newCollection;
-    }
-    
-    public T getAddedValue() {
-        return addedValue;
-    }
-}
-
-class CollectionRemoveEvent<T> extends PropertyEvent<T> {
-    private Collection<T> oldCollection;
-    private Collection<T> newCollection;
-    private T removedValue;
-
-    public CollectionRemoveEvent(Collection<T> oldCollection, Collection<T> newCollection, T removedValue) {
-        this.oldCollection = oldCollection;
-        this.newCollection = newCollection;
-        this.removedValue = removedValue;
-    }
-
-    public Collection<T> getOldCollection() {
-        return oldCollection;
-    }
-
-    public Collection<T> getNewCollection() {
-        return newCollection;
-    }
-    
-    public T getRemovedValue() {
-        return removedValue;
-    }
-}
 
 public class ObservableCollection<T> extends Observable<Collection<T>> implements Iterable<T> {
     private List<CollectionAddListener<T>> addListeners;

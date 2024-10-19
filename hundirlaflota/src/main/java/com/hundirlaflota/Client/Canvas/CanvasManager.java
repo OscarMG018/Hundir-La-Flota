@@ -6,6 +6,7 @@ import javafx.scene.input.MouseEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.input.MouseButton;
 
 public class CanvasManager {
     private Canvas canvas;
@@ -23,6 +24,14 @@ public class CanvasManager {
         setupEventHandlers();
     }
 
+    public CanvasObject getHoverObject() {
+        return hoverObject;
+    }
+
+    public CanvasObject getDragObject() {
+        return dragObject;
+    }
+
     private void setupEventHandlers() {
         canvas.setOnMouseClicked(this::handleMouseClick);
         canvas.setOnMouseMoved(this::handleMouseMove);
@@ -32,7 +41,17 @@ public class CanvasManager {
 
     public void addObject(CanvasObject object) {
         objects.add(object);
-        sortObjects(false);
+        for (CanvasObject child : object.getChildren()) {
+            addObjectRecursive(child);
+        }
+        sortObjects(false);// only sort after recursive addition
+    }
+
+    private void addObjectRecursive(CanvasObject object) {
+        objects.add(object);
+        for (CanvasObject child : object.getChildren()) {
+            addObjectRecursive(child);
+        }
     }
 
     public void removeObject(CanvasObject object) {
@@ -40,10 +59,13 @@ public class CanvasManager {
         sortObjects(false);
     }
 
+    public void clear() {
+        objects.clear();
+    }
+
     public void sortObjects(boolean ascending) {
         objects.sort((o1, o2) -> ascending ? o1.getzIndex() - o2.getzIndex() : o2.getzIndex() - o1.getzIndex());
     }
-
 
     public void draw() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
@@ -55,12 +77,14 @@ public class CanvasManager {
     }
 
     private void handleMouseClick(MouseEvent event) {
+        System.out.println("Mouse clicked");
         for (CanvasObject object : objects) {
             if (isPointInObject(event.getX(), event.getY(), object)) {
                 object.OnClick(event);
                 break;
             }
         }
+        draw();
     }
 
     private void handleMouseMove(MouseEvent event) {
@@ -70,12 +94,14 @@ public class CanvasManager {
                     hoverObject = object;
                     hoverObject.OnMouseEnter(event);
                 }
+                object.OnMouseOver(event);
                 break;
             } else if (hoverObject == object) {
                 hoverObject = null;
                 object.OnMouseExit(event);
             }
         }
+        draw();
     }
 
     private void handleMouseDrag(MouseEvent event) {
@@ -89,17 +115,20 @@ public class CanvasManager {
                 break;
             }
         }
+        draw();
     }
 
     private void handleMouseRelease(MouseEvent event) {
         for (CanvasObject object : objects) {
             if (isPointInObject(event.getX(), event.getY(), object)) {
+                System.out.println("OnDragEnd");
                 object.OnDragEnd(event);
                 for (CanvasObject object2 : objects) {
                     if (object2 == object)
                         continue;
                     if (isPointInObject(event.getX(), event.getY(), object2)) {
-                        object.OnDrop(event, object);
+                        System.out.println("OnDrop");
+                        object2.OnDrop(event, object);
                         break;
                     }
                 }
@@ -107,6 +136,7 @@ public class CanvasManager {
                 break;
             }
         }
+        draw();
     }
 
     private boolean isPointInObject(double x, double y, CanvasObject object) {

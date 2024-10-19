@@ -1,4 +1,4 @@
-package com.hundirlaflota.Client;
+package com.hundirlaflota.Client.ViewControllers;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -15,8 +15,9 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
-import com.hundirlaflota.Client.Utils.ObservableCollection;
-import com.hundirlaflota.Client.Utils.UtilsWS;
+import com.hundirlaflota.Client.Main;
+import com.hundirlaflota.Client.Utils.*;
+import com.hundirlaflota.Client.Utils.Observable.*;
 import com.hundirlaflota.Common.*;
 
 public class NoTurnViewController implements Initializable, OnSceneVisible {

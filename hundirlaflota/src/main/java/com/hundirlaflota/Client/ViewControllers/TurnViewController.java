@@ -1,4 +1,4 @@
-package com.hundirlaflota.Client;
+package com.hundirlaflota.Client.ViewControllers;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -10,10 +10,13 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.image.Image;
 
+import com.hundirlaflota.Client.Main;
 import com.hundirlaflota.Common.*;
 import java.util.ArrayList;
 
 import java.util.concurrent.*;
+import com.hundirlaflota.Client.Utils.*;
+import com.hundirlaflota.Client.Utils.Observable.ObservableCollection;
 
 public class TurnViewController implements Initializable, OnSceneVisible {
 
