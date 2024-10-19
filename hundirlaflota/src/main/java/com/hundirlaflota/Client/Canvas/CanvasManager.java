@@ -4,14 +4,14 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.List;
 import javafx.scene.input.MouseButton;
 
 public class CanvasManager {
     private Canvas canvas;
     private GraphicsContext gc;
-    private List<CanvasObject> objects;
+    private CopyOnWriteArrayList<CanvasObject> objects;
 
     private CanvasObject hoverObject;
     private CanvasObject dragObject;
@@ -19,7 +19,7 @@ public class CanvasManager {
     public CanvasManager(Canvas canvas) {
         this.canvas = canvas;
         this.gc = canvas.getGraphicsContext2D();
-        this.objects = new ArrayList<>();
+        this.objects = new CopyOnWriteArrayList<>();
 
         setupEventHandlers();
     }

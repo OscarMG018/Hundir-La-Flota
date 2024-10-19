@@ -6,9 +6,7 @@ import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.image.Image;
 
 import com.hundirlaflota.Client.Main;
 import com.hundirlaflota.Common.*;
@@ -17,14 +15,14 @@ import java.util.ArrayList;
 import java.util.concurrent.*;
 import com.hundirlaflota.Client.Utils.*;
 import com.hundirlaflota.Client.Utils.Observable.ObservableCollection;
+import com.hundirlaflota.Client.Canvas.*;
+import javafx.application.Platform;
 
 public class TurnViewController implements Initializable, OnSceneVisible {
-
 
     private final int CELL_SIZE = 30;
     private final int GRID_SIZE = 10;
     private final int BORDER_SIZE = 1;
-    private final int SHIP_PADDING = 5;
 
     private ObservableCollection<Position> opponentsAttacks = new ObservableCollection<>(new ArrayList<Position>());
     private ObservableCollection<Ship> myShips = new ObservableCollection<>(new ArrayList<Ship>());
@@ -33,89 +31,89 @@ public class TurnViewController implements Initializable, OnSceneVisible {
     private Canvas canvas;
 
     private UtilsWS ws;
+    private CanvasManager canvasManager;
+    private GridCanvasObject grid;
+
     @Override
     public void onSceneVisible() {
-        drawGrid();
+        canvasManager.clear();
+        grid = new GridCanvasObject(0, 0, canvas.getWidth(), 0, GRID_SIZE, 0);
+        canvasManager.addObject(grid);
+        
+        updateCanvas();
         //TEST:
-        myShips.add(new Ship("Destroyer", 5, new Position(2, 2), Ship.ShipPosition.VERTICAL));
-        myShips.add(new Ship("Destroyer", 4, new Position(2, 2), Ship.ShipPosition.VERTICAL));
-        myShips.add(new Ship("Destroyer", 3, new Position(2, 2), Ship.ShipPosition.VERTICAL));
-        myShips.add(new Ship("Destroyer", 3, new Position(2, 2), Ship.ShipPosition.VERTICAL));
-        myShips.add(new Ship("Destroyer", 3, new Position(2, 2), Ship.ShipPosition.VERTICAL));
-        myShips.add(new Ship("Destroyer", 2, new Position(2, 2), Ship.ShipPosition.VERTICAL));
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
             try {
-                for (int i = 0; i < 20; i++) {
-                    Thread.sleep(1000);
-                    int x = (int) (Math.random() * GRID_SIZE);
-                    int y = (int) (Math.random() * GRID_SIZE);
-                    opponentsAttacks.add(new Position(x, y));
+                for (int x = 0; x < 10; x++) {
+                    for (int y = 0; y < 10; y++) {
+                        if (!opponentsAttacks.get().contains(new Position(x, y))) {
+                            opponentsAttacks.add(new Position(x, y));
+                        }
+                        Thread.sleep(1000);
+                    }
                 }
+                opponentsAttacks.add(new Position(0, 0));//Already attacked
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             
         });
-        //TEST:
-        opponentsAttacks.add(new Position(2, 2));//already attacked
-
     }
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         ws = UtilsWS.getSharedInstance(Main.location);
-        //We change the size of the canvas so it is centered
         canvas.setWidth(GRID_SIZE * CELL_SIZE + BORDER_SIZE*(GRID_SIZE+1));
         canvas.setHeight(GRID_SIZE * CELL_SIZE + BORDER_SIZE*(GRID_SIZE+1));
+
+        //TEST:
+        myShips.add(new Ship("Destroyer", 5, new Position(0, 0), Ship.ShipPosition.VERTICAL));
+        myShips.add(new Ship("Destroyer", 4, new Position(2, 2), Ship.ShipPosition.HORIZONTAL));
+        myShips.add(new Ship("Destroyer", 3, new Position(4, 4), Ship.ShipPosition.VERTICAL));
+        myShips.add(new Ship("Destroyer", 3, new Position(6, 6), Ship.ShipPosition.HORIZONTAL));
+        
+        canvasManager = new CanvasManager(canvas);
+        
         //SET LISTENERS
-        opponentsAttacks.addCollectionAddListener(event -> {
-            drawGrid();
-        });
-        myShips.addCollectionAddListener(event -> {
-            drawGrid();
-        });
+        opponentsAttacks.addCollectionAddListener(event -> updateCanvas());
+        myShips.addCollectionAddListener(event -> updateCanvas());
     }
 
-    void drawGrid() {
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        //Draw opponents attacks
-        for (Position pos : opponentsAttacks) {
-            if (myShips.stream().anyMatch(ship -> ship.HasPosition(pos))) {
-                drawCell(gc, pos, Color.RED);
-            } else {
-                drawCell(gc, pos, Color.BLUE);
+    private void updateCanvas() {
+        Platform.runLater(() -> {
+            // Draw opponents attacks
+            for (Position pos : opponentsAttacks) {
+                if (myShips.stream().anyMatch(ship -> ship.HasPosition(pos))) {
+                    grid.setCellColor(pos.getY(), pos.getX(), Color.RED);
+                } else {
+                    grid.setCellColor(pos.getY(), pos.getX(), Color.BLUE);
+                }
             }
-        }
-        //Draw gridLines
-        gc.setStroke(Color.BLACK);
-        gc.setLineWidth(BORDER_SIZE);
-        for (int i = 0; i < GRID_SIZE+1; i++) {//+1 to close the grid
-            gc.strokeLine(i * CELL_SIZE, 0, i * CELL_SIZE, GRID_SIZE * CELL_SIZE);//Vertical lines
-            gc.strokeLine(0, i * CELL_SIZE, GRID_SIZE * CELL_SIZE, i * CELL_SIZE);//Horizontal lines
-        }
-        //Draw my ships
-        //TODO: draw ships in the right places
-        for (Ship ship : myShips) {
-            Image image = new Image(getClass().getResourceAsStream("/images/" + ship.getName() + ".png"));
-            drawShipImage(gc, ship.getPosition(), image, ship);
-        }
+            
+            // Draw my ships
+            for (Ship ship : myShips) {
+                ShipCanvasObject shipObject = createShipObject(ship);
+                canvasManager.addObject(shipObject);
+            }
+            
+            canvasManager.draw();
+        });
     }
 
-    void drawCell(GraphicsContext gc, Position pos, Color color) {
-        gc.setFill(color);
-        gc.fillRect(pos.getX()* CELL_SIZE, pos.getY() * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-    }
-
-    void drawShipImage(GraphicsContext gc, Position pos, Image image, Ship ship) {
-        gc.save();
-        gc.translate(pos.getX() * CELL_SIZE, pos.getY() * CELL_SIZE);
-        if (ship.getShipPosition() == Ship.ShipPosition.HORIZONTAL) {
-            gc.rotate(90);
-            gc.translate(0, -CELL_SIZE*ship.getSize());
-        }
-        gc.drawImage(image, SHIP_PADDING, SHIP_PADDING, CELL_SIZE-SHIP_PADDING*2, CELL_SIZE*ship.getSize()-SHIP_PADDING*2);
-        gc.restore();
+    private ShipCanvasObject createShipObject(Ship ship) {
+        double[] cellPos = grid.getCellUpperLeftCorner(ship.getPosition().getY(), ship.getPosition().getX());
+        boolean isHorizontal = ship.getShipPosition() == Ship.ShipPosition.HORIZONTAL;
+        
+        return new ShipCanvasObject(
+            ship.getName(),
+            cellPos[0],
+            cellPos[1],
+            CELL_SIZE,
+            ship.getSize(),
+            1,
+            false,
+            isHorizontal
+        );
     }
 }
