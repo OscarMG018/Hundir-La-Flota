@@ -31,6 +31,7 @@ public class ShipsViewController implements Initializable, OnSceneVisible {
         System.out.println("Ships visible");
         canvasManager.clear();
         grid = new GridCanvasObject(0, 0, canvas.getHeight(), 0, 10, 0);
+
         canvasManager.addObject(grid);
         // Add ships to the side
         cellSize = grid.getCellSize();
@@ -53,7 +54,7 @@ public class ShipsViewController implements Initializable, OnSceneVisible {
         ships.add(ship4);
         ships.add(ship5);
         ships.add(ship6);
-
+        grid.setShipOnGrid(ships);
         canvasManager.draw();
     }
 

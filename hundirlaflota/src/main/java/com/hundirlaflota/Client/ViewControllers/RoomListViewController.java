@@ -45,10 +45,9 @@ class RoomUI {
     }
 }
 
-
 public class RoomListViewController implements Initializable, OnSceneVisible {
     @FXML
-    private VBox RoomsVBox;
+    private VBox RoomsList;
     @FXML
     private Button CreateRoomButton;
 
@@ -84,20 +83,20 @@ public class RoomListViewController implements Initializable, OnSceneVisible {
             MessageType requestType = MessageType.valueOf(json.getString("requestType"));
             if (requestType == MessageType.LIST_ROOMS) {
                 JSONArray rooms = json.getJSONArray("data");
-                if (rooms.length() == 0) {
-                    System.out.println("No rooms found");
-                    Platform.runLater(() -> {
-                        RoomsVBox.getChildren().clear();
-                        RoomsVBox.getChildren().add(new Label("No rooms found"));
-                    });
-                }
-                for (int i = 0; i < rooms.length(); i++) {
-                    JSONObject room = rooms.getJSONObject(i);
-                    Platform.runLater(() -> {
-                        RoomsVBox.getChildren().clear();
-                        RoomsVBox.getChildren().add(new RoomUI(room.getString("name"), room.getInt("players")).getUI());
-                    });
-                }
+                Platform.runLater(() -> {
+                    if (rooms.length() == 0) {
+                        System.out.println("No rooms found");
+                        RoomsList.getChildren().clear();
+                        RoomsList.getChildren().add(new Label("No rooms found"));
+                    }  
+                    else {
+                        RoomsList.getChildren().clear();
+                        for (int i = 0; i < rooms.length(); i++) {
+                            JSONObject room = rooms.getJSONObject(i);
+                            RoomsList.getChildren().add(new RoomUI(room.getString("name"), room.getInt("players")).getUI());
+                        } 
+                    }
+                });
             }
             else if (requestType == MessageType.CREATE_ROOM) {
                 updateRoomList.stop();
