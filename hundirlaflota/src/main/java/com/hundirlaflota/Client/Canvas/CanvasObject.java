@@ -13,6 +13,7 @@ public abstract class CanvasObject {
     protected double height;
     protected int zIndex;
     protected ArrayList<CanvasObject> children = new ArrayList<>();
+    protected boolean isDraggable = false;
 
     public CanvasObject(double x, double y, double width, double height, int zIndex) {
         this.x = x;
@@ -90,6 +91,10 @@ public abstract class CanvasObject {
 
     public int getzIndex() {
         return zIndex;
+    }
+
+    public void setzIndex(int zIndex) {
+        this.zIndex = zIndex;
     }
 
     public void setPosition(double x, double y) {

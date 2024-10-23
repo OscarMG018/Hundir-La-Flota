@@ -44,7 +44,7 @@ public class CanvasManager {
         for (CanvasObject child : object.getChildren()) {
             addObjectRecursive(child);
         }
-        sortObjects(false);// only sort after recursive addition
+        sortObjects();
     }
 
     private void addObjectRecursive(CanvasObject object) {
@@ -56,24 +56,27 @@ public class CanvasManager {
 
     public void removeObject(CanvasObject object) {
         objects.remove(object);
-        sortObjects(false);
+        sortObjects();
     }
 
     public void clear() {
         objects.clear();
     }
 
-    public void sortObjects(boolean ascending) {
-        objects.sort((o1, o2) -> ascending ? o1.getzIndex() - o2.getzIndex() : o2.getzIndex() - o1.getzIndex());
+    public void sortObjects() {
+        objects.sort((o1, o2) -> o2.getzIndex() - o1.getzIndex());
     }
 
     public void draw() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        sortObjects(true);
-        for (CanvasObject object : objects) {
-            object.draw(gc);
+        for (int i = objects.size() - 1; i >= 0; i--) {
+            if (objects.get(i) == dragObject)
+                continue;
+            objects.get(i).draw(gc);
         }
-        sortObjects(false);
+        if (dragObject != null) {
+            dragObject.draw(gc);
+        }
     }
 
     private void handleMouseClick(MouseEvent event) {
@@ -105,8 +108,13 @@ public class CanvasManager {
     }
 
     private void handleMouseDrag(MouseEvent event) {
+        if (dragObject != null && isPointInObject(event.getX(), event.getY(), dragObject)) {
+            dragObject.OnDrag(event);
+            draw();
+            return;
+        }
         for (CanvasObject object : objects) {
-            if (isPointInObject(event.getX(), event.getY(), object)) {
+            if (object.isDraggable && isPointInObject(event.getX(), event.getY(), object)) {
                 if (dragObject != object) {
                     dragObject = object;
                     dragObject.OnDragStart(event);
@@ -120,7 +128,7 @@ public class CanvasManager {
 
     private void handleMouseRelease(MouseEvent event) {
         for (CanvasObject object : objects) {
-            if (isPointInObject(event.getX(), event.getY(), object)) {
+            if (object.isDraggable && isPointInObject(event.getX(), event.getY(), object)) {
                 System.out.println("OnDragEnd");
                 object.OnDragEnd(event);
                 for (CanvasObject object2 : objects) {
