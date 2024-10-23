@@ -1,5 +1,6 @@
 package com.hundirlaflota.Common;
-import java.util.ArrayList;
+import java.util.*;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -110,11 +111,11 @@ public class Game {
                 ((ObjectNode) rootNode).put(coordinate, "water");
                 objectMapper.writeValue(jsonFile, rootNode);
                 if (player.equals("player1")) {
-                    player1turn = false;
-                    player2turn = true;
+                    //player1turn = false;
+                    //player2turn = true;
                 } else {
-                    player1turn = true;
-                    player2turn = false;
+                    //player1turn = true;
+                    //player2turn = false;s
                 }
                 return false;
             } else {

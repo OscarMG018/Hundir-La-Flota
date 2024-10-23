@@ -1,0 +1,86 @@
+#root {
+    -fx-padding: 20;
+    -fx-background-color: #f9f9f9; /* Light background */
+    -fx-spacing: 15;
+}
+
+#RoomName {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333; /* Darker text */
+    -fx-padding: 10 0 20 0;
+    -fx-alignment: center;
+}
+
+#playersHBox {
+    -fx-spacing: 20;
+    -fx-padding: 15;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ddd;
+    -fx-border-radius: 5;
+    -fx-border-width: 2;
+    -fx-background-radius: 5;
+}
+
+#UserVBox, #OtherVBox {
+    -fx-spacing: 10;
+    -fx-padding: 10;
+    -fx-background-color: #f4f4f4;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-border-color: #ccc; /* Light border */
+    -fx-border-width: 1;
+    -fx-alignment: center-left;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 3);
+}
+
+#UserName, #OtherName {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333; /* Dark text */
+}
+
+#UserReady, #OtherReady {
+    -fx-font-size: 14px;
+    -fx-text-fill: #4CAF50; /* Green to indicate ready status */
+    -fx-font-weight: bold;
+}
+
+#ControlsHBox {
+    -fx-spacing: 15;
+    -fx-padding: 10;
+    -fx-alignment: center;
+}
+
+#ReadyButton, #StartButton, #LeaveButton {
+    -fx-font-size: 16px;
+    -fx-text-fill: #fff;
+    -fx-background-radius: 5;
+    -fx-padding: 10 20;
+    -fx-cursor: hand; /* Pointer cursor on hover */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 5);
+}
+
+#ReadyButton {
+    -fx-background-color: #4CAF50; /* Green button for "Ready" */
+}
+
+#ReadyButton:hover {
+    -fx-background-color: #45a049; /* Darker green on hover */
+}
+
+#StartButton {
+    -fx-background-color: #2196F3; /* Blue button for "Start" */
+}
+
+#StartButton:hover {
+    -fx-background-color: #1976D2; /* Darker blue on hover */
+}
+
+#LeaveButton {
+    -fx-background-color: #F44336; /* Red button for "Leave" */
+}
+
+#LeaveButton:hover {
+    -fx-background-color: #D32F2F; /* Darker red on hover */
+}

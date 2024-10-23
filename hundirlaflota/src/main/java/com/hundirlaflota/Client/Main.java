@@ -24,7 +24,7 @@ public class Main extends Application {
         UtilsViews.addView(Main.class, "Ships", "/layout_ships.fxml", "/style_ships.css");
         UtilsViews.addView(Main.class, "Turn", "/layout_turn.fxml", "/style_turn.css");
         UtilsViews.addView(Main.class, "NoTurn", "/layout_no_turn.fxml", "/style_no_turn.css");
-        UtilsViews.setView("Login");
+        UtilsViews.setView("Ships");
         Scene scene = new Scene(UtilsViews.parentContainer);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Hundir la Flota");
