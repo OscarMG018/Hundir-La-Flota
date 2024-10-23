@@ -24,7 +24,9 @@ public class UtilsWS  extends WebSocketClient {
     }
 
     static public UtilsWS getSharedInstance (String location) {
-
+        if (location.isEmpty()) {
+            return null;
+        }
         if (sharedInstance == null) {
             try {
                 sharedInstance = new UtilsWS(location, (Draft) new Draft_6455());

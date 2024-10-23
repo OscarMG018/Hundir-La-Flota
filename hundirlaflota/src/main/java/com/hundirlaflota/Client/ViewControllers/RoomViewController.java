@@ -46,6 +46,7 @@ public class RoomViewController implements Initializable,OnSceneVisible {
 
     @Override
     public void onSceneVisible() {
+        ws = UtilsWS.getSharedInstance(Main.UsedLocation);
         System.out.println("RoomViewController onSceneVisible");
         ws.setOnMessage(this::handleMessage);
         ws.safeSend(new RoomInfoMessage().toString());
@@ -56,7 +57,6 @@ public class RoomViewController implements Initializable,OnSceneVisible {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ws = UtilsWS.getSharedInstance(Main.location);
         ReadyButton.setOnAction(event -> {
             ws.safeSend(new SetReadyMessage(!isReady).toString());
         });
@@ -107,9 +107,31 @@ public class RoomViewController implements Initializable,OnSceneVisible {
         Platform.runLater(() -> {
             RoomName.setText(name);
             UserName.setText(hostName);
-            UserReady.setText(hostReady ? "Ready" : "Not Ready");
+            if (hostReady) {
+                UserReady.setText("Ready");
+                UserReady.getStyleClass().clear();
+                UserReady.getStyleClass().add("Ready");
+            }
+            else {
+                UserReady.setText("Not Ready");
+                UserReady.getStyleClass().clear();
+                UserReady.getStyleClass().add("NotReady");
+            }
+            if (inviteName.isEmpty()) {
+                OtherReady.setText("");
+                OtherReady.getStyleClass().clear();
+            }
+            else if (inviteReady) {
+                OtherReady.setText("Ready");
+                OtherReady.getStyleClass().clear();
+                OtherReady.getStyleClass().add("Ready");
+            }
+            else {
+                OtherReady.setText("Not Ready");
+                OtherReady.getStyleClass().clear();
+                OtherReady.getStyleClass().add("NotReady");
+            }
             OtherName.setText(inviteName.isEmpty() ? "Waiting for opponent" : inviteName);
-            OtherReady.setText(inviteReady ? "Ready" : "Not Ready");
             if (isHost) {
                 if (hostReady) {
                     ReadyButton.setText("Cancel");

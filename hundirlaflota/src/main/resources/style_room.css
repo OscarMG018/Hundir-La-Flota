@@ -42,9 +42,18 @@
 
 #UserReady, #OtherReady {
     -fx-font-size: 14px;
-    -fx-text-fill: #4CAF50; /* Green to indicate ready status */
+
     -fx-font-weight: bold;
 }
+
+.Ready {
+    -fx-text-fill: #4CAF50; /* Green to indicate ready status */
+}
+
+.NotReady {
+    -fx-text-fill: #F44336;
+}
+
 
 #ControlsHBox {
     -fx-spacing: 15;

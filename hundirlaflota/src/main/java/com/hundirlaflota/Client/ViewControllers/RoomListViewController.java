@@ -37,7 +37,7 @@ class RoomUI {
         Button joinButton = new Button("Join");
         joinButton.getStyleClass().add("room-join-button");
         joinButton.setOnAction(event -> {
-            UtilsWS.getSharedInstance(Main.location).safeSend(new JoinRoomMessage(name).toString());
+            UtilsWS.getSharedInstance(Main.UsedLocation).safeSend(new JoinRoomMessage(name).toString());
         });
         hbox.getChildren().addAll(nameLabel, playersLabel, joinButton);
         hbox.getStyleClass().add("room-container");
@@ -61,7 +61,6 @@ public class RoomListViewController implements Initializable, OnSceneVisible {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ws = UtilsWS.getSharedInstance(Main.location);
         CreateRoomButton.setOnAction(event -> {
             CreateRoom();
         });
@@ -69,9 +68,10 @@ public class RoomListViewController implements Initializable, OnSceneVisible {
 
     @Override
     public void onSceneVisible() {
+        ws = UtilsWS.getSharedInstance(Main.UsedLocation);
         ws.setOnMessage(this::handleListRoomsMessage);
         ws.safeSend(new ListRoomsMessage().toString());
-        updateRoomList = new UpdateRoomList(ws);
+        updateRoomList = new UpdateRoomList();
         Thread updateRoomListThread = new Thread(updateRoomList);
         updateRoomListThread.start();
     }
