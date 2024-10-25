@@ -69,6 +69,7 @@ public class RoomViewController implements Initializable,OnSceneVisible {
     }
 
     public void handleMessage(String message) {
+        System.out.println(message);
         JSONObject json = new JSONObject(message);
         MessageType type = MessageType.valueOf(json.getString("type"));
         if (type == MessageType.ACK) {
