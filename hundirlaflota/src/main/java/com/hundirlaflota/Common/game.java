@@ -73,12 +73,12 @@ public class Game {
     }
 
 
-    public boolean playShips(String player, String coordinate) {
+    public boolean playShips(String jsonFileName, String coordinate) {
         List<String> shipNames = Arrays.asList("aircraft carrier", "battleship", "cruiser", "submarine", "destroyer");
         ObjectMapper objectMapper = new ObjectMapper();
-        String jsonFileName = player.equals("player1") ? "player2.json" : "player1.json";
+        String FileName = jsonFileName;
         try {
-            File jsonFile = new File(jsonFileName);
+            File jsonFile = new File(FileName);
             JsonNode rootNode = objectMapper.readTree(jsonFile);
             if (rootNode.has(coordinate)) {
                 String value = rootNode.get(coordinate).asText();
@@ -125,8 +125,8 @@ public class Game {
         }
     }
 
-    public static boolean putShip(String player, String coordinate, String ship, boolean isVertical) {
-        String jsonFileName = player.equals("player1") ? "player2.json" : "player1.json";
+    public static boolean putShip(String jsonFileName, String coordinate, String ship, boolean isVertical) {
+        String FileName = jsonFileName;
         int shipSize;
         switch (ship.toLowerCase()) {
             case "aircraft carrier":
