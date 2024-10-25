@@ -9,6 +9,7 @@ public class Room implements Serializable {
    private Player invite;
    private boolean hostReady;
    private boolean inviteReady;
+   private Game game;
 
    public Room(Player host, String name) {
     this.host = host;
@@ -111,5 +112,9 @@ public class Room implements Serializable {
    public void PromoteInvite() {
       host = invite;
       invite = null;
+   }
+
+   public void StartGame() {
+      
    }
 }

@@ -12,8 +12,7 @@ public class Game {
     private ArrayList<String> shipsPlayer1;
     private ArrayList<String> shipsPlayer2;
     private boolean player1Turn;
-    private boolean player2Turn;
-    
+    private boolean player2Turn;    
     
     public Game() {
         
