@@ -61,7 +61,7 @@ public class RoomViewController implements Initializable,OnSceneVisible {
             ws.safeSend(new SetReadyMessage(!isReady).toString());
         });
         StartButton.setOnAction(event -> {
-            ws.safeSend(new StartGameMessage().toString());
+            ws.safeSend(new StartGameMessage(UserName.getText(),OtherName.getText()).toString());
         });
         LeaveButton.setOnAction(event -> {
             ws.safeSend(new LeaveRoomMessage().toString());
@@ -80,16 +80,17 @@ public class RoomViewController implements Initializable,OnSceneVisible {
             else if (requestType == MessageType.SET_READY) {
                 isReady = !isReady;
             }
-            else if (requestType == MessageType.START_GAME) {
-                updateRoomInfo.stop();
-                //TODO: Handle game start
-            }
             else if (requestType == MessageType.LEAVE_ROOM) {
                 updateRoomInfo.stop();
                 Platform.runLater(() -> {
                     UtilsViews.setView("RoomList");
                 });
             }
+        }
+        else if (type == MessageType.START_GAME) {
+            Platform.runLater(() -> {
+                UtilsViews.setView("Ships");
+            });
         }
         else if (type == MessageType.ERROR) {
             String errorMessage = json.getString("message");

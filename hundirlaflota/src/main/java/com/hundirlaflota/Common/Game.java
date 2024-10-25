@@ -111,11 +111,11 @@ public class Game {
                 ((ObjectNode) rootNode).put(coordinate, "water");
                 objectMapper.writeValue(jsonFile, rootNode);
                 if (player.equals("player1")) {
-                    //player1turn = false;
-                    //player2turn = true;
+                    this.player1Turn = true;
+                    this.player2Turn = false;
                 } else {
-                    //player1turn = true;
-                    //player2turn = false;s
+                    this.player1Turn = false;
+                    this.player2Turn = true;
                 }
                 return false;
             } else {
@@ -124,10 +124,6 @@ public class Game {
         } catch (IOException e) {
             return false;
         }
-    }
-
-    
-    public void gameActions() {
     }
 
     public static boolean putShip(String player, String coordinate, String ship, boolean isVertical) {
@@ -150,7 +146,7 @@ public class Game {
                 shipSize = 2;
                 break;
             default:
-                return false;
+                throw new IllegalArgumentException("ship name not recognized: " + ship);
         }
         ObjectMapper objectMapper = new ObjectMapper();
         try {
