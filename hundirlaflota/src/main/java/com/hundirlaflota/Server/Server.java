@@ -176,6 +176,7 @@ public class Server extends WebSocketServer {
           player.sendMessage(new ErrorMessage("You are not in a room", MessageType.SET_READY).toString());
         }
         break;
+        case STAR
       //TODO: Add cases for the game messages
       default:
         player.sendMessage(new ErrorMessage("Invalid message type", type).toString());
