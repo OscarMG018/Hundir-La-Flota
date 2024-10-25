@@ -178,6 +178,7 @@ public class Server extends WebSocketServer {
         break;
         case STARTING_PLAYER:
           player.getRoom().getHost().sendMessage(new StartGameMessage().toString());
+          player.getRoom().getInvite().sendMessage((new StartGameMessage().toString()));
       //TODO: Add cases for the game messages
       default:
         player.sendMessage(new ErrorMessage("Invalid message type", type).toString());
