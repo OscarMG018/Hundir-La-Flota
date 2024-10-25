@@ -20,6 +20,7 @@ public class StartGameMessage extends ServerMessage {
         return "{" +
             "type: " + type + ", " +
             "player1: " + "\"" + player1Name + "\"" +
+            "player2: " + "\"" + player2Name + "\"" +
         "}";
     }
 }
