@@ -82,6 +82,7 @@ public class TurnViewController implements Initializable, OnSceneVisible {
 
     private void updateCanvas() {
         Platform.runLater(() -> {
+            canvasManager.clear();
             // Draw opponents attacks
             for (Position pos : opponentsAttacks) {
                 if (myShips.stream().anyMatch(ship -> ship.HasPosition(pos))) {
