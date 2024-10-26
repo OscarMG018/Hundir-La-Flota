@@ -1,5 +1,7 @@
 package com.hundirlaflota.Client.Canvas;
 
+import java.util.ArrayList;
+
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.input.MouseEvent;
@@ -9,12 +11,18 @@ public class GridCanvasObject extends CanvasObject {
     private double borderSize;
     private GridCell[][] cells;
     private GridCell hoveredCell;
+    private ArrayList<ShipCanvasObject> ships;
 
     public GridCanvasObject(double x, double y, double size, int zIndex, int gridSize, double borderSize) {
         super(x, y, size, size, zIndex);
         this.gridSize = gridSize;
         this.borderSize = borderSize;
+        this.ships = ships;
         initializeCells();
+    }
+
+    public void setShipOnGrid(ArrayList<ShipCanvasObject> ships) {
+        this.ships = ships;
     }
 
     private void initializeCells() {
@@ -65,15 +73,56 @@ public class GridCanvasObject extends CanvasObject {
         return null;
     }
 
+    public boolean isPositionValid(int row, int col,int SectionHeld,int size,boolean isHorizontal,ShipCanvasObject placedShip) {
+        if (isHorizontal) {
+            if (col + size - SectionHeld > gridSize || col - SectionHeld < 0) {
+                System.out.println("out of bound");
+                return false;
+            }
+        } else {
+            if (row + size - SectionHeld > gridSize || row - SectionHeld < 0) {
+                System.out.println("out of bound");
+                return false;
+            }
+        }
+        ArrayList<int[]> shipPositions = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            if (isHorizontal) {
+                shipPositions.add(new int[]{row,col+i-SectionHeld});
+            }
+            else {
+                shipPositions.add(new int[]{row+i-SectionHeld,col});
+            }
+        }
+
+        for (int[] pos : shipPositions) {
+            double[] center = getCellCenter(pos[0], pos[1]);
+            for (ShipCanvasObject ship : ships) {
+                if (ship.equals(placedShip))
+                    continue;
+                if (ship.isPointInObject(center[0],center[1])) {
+                    System.out.println("ships in the way");
+                    return false;
+                }
+            }
+        }
+        System.out.println("true");
+        return true;
+    }
+
     @Override
     public void OnDrop(MouseEvent event, CanvasObject source) {
         if (source instanceof ShipCanvasObject) {
             GridCell cell = getCellFromPoint(event.getX(), event.getY());
             if (cell != null) {
-                double[] center = cell.getCenter();
                 boolean horizontal = ((ShipCanvasObject) source).isHorizontal();
-                int SectionHeld = ((ShipCanvasObject) source).getShipSection();
                 int size = ((ShipCanvasObject) source).getSize();
+                int SectionHeld = ((ShipCanvasObject) source).getShipSection();
+                if (!isPositionValid(cell.getRow(), cell.getCol(),SectionHeld, size, horizontal,(ShipCanvasObject) source)) {
+                    ((ShipCanvasObject) source).CancelDrag();
+                    return;
+                }
+                double[] center = cell.getCenter();
                 if (horizontal) {
                     center[0] += getCellSize() / 2 * (size - 1);
                     center[0] -= getCellSize() * SectionHeld;
@@ -82,7 +131,7 @@ public class GridCanvasObject extends CanvasObject {
                     center[1] -= getCellSize() * SectionHeld;
                 }
                 ((ShipCanvasObject) source).setPosition(center[0], center[1]);
-                System.out.println("Ship dropped on cell: " + cell.getRow() + ", " + cell.getCol());
+                
             }
         }
     }

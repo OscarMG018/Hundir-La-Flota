@@ -16,6 +16,9 @@ public class ShipCanvasObject extends CanvasObject {
     private int size;
     private boolean dragging;
     private double cellSize;
+    private double dragx = 0;
+    private double dragy = 0;
+
 
     public ShipCanvasObject(String ShipName, double X, double Y, double cellSize, int size, int zIndex, boolean isDraggable, boolean horizontal) {
         super(X, Y, horizontal ? cellSize * size : cellSize, horizontal ? cellSize : cellSize * size, zIndex);
@@ -68,6 +71,8 @@ public class ShipCanvasObject extends CanvasObject {
             dragging = true;
             XOffset = event.getX() - x;
             YOffset = event.getY() - y;
+            dragx = x;
+            dragy = y;
         }
     }
 
@@ -82,6 +87,11 @@ public class ShipCanvasObject extends CanvasObject {
     @Override
     public void OnDragEnd(MouseEvent event) {
         dragging = false;
+    }
+
+    public void CancelDrag() {
+        x = dragx;
+        y = dragy;
     }
 
     public void OnClick(MouseEvent event) {

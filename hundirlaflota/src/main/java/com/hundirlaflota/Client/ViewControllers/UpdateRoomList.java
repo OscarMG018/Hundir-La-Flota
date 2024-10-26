@@ -2,6 +2,7 @@ package com.hundirlaflota.Client.ViewControllers;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.hundirlaflota.Client.Main;
 import com.hundirlaflota.Client.Utils.UtilsWS;
 import com.hundirlaflota.Common.ServerMessages.ListRoomsMessage;
 
@@ -10,8 +11,8 @@ public class UpdateRoomList implements Runnable {
     private AtomicBoolean running = new AtomicBoolean(true);
     public static final int UPDATE_INTERVAL = 200;
 
-    public UpdateRoomList(UtilsWS ws) {
-        this.ws = ws;
+    public UpdateRoomList() {
+        this.ws = UtilsWS.getSharedInstance(Main.UsedLocation);
     }
 
     public void run() {

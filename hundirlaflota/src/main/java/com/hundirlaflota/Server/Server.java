@@ -59,7 +59,7 @@ public class Server extends WebSocketServer {
 
   @Override
   public void onMessage(WebSocket conn, String message) {
-    //System.out.println("Received message: " + message);
+    System.out.println("Received message: " + message);
     Player player = getPlayerByConn(conn);
     JSONObject json = new JSONObject(message);
     MessageType type;
@@ -175,6 +175,11 @@ public class Server extends WebSocketServer {
         else {
           player.sendMessage(new ErrorMessage("You are not in a room", MessageType.SET_READY).toString());
         }
+        break;
+      case START_GAME:
+        System.out.println(message);
+        player.getRoom().getHost().sendMessage(new StartGameMessage().toString());
+        player.getRoom().getInvite().sendMessage(new StartGameMessage().toString());
         break;
       //TODO: Add cases for the game messages
       default:

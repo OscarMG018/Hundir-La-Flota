@@ -36,6 +36,7 @@ public class TurnViewController implements Initializable, OnSceneVisible {
 
     @Override
     public void onSceneVisible() {
+        ws = UtilsWS.getSharedInstance(Main.UsedLocation);
         canvasManager.clear();
         grid = new GridCanvasObject(0, 0, canvas.getWidth(), 0, GRID_SIZE, 0);
         canvasManager.addObject(grid);
@@ -63,7 +64,6 @@ public class TurnViewController implements Initializable, OnSceneVisible {
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ws = UtilsWS.getSharedInstance(Main.location);
         canvas.setWidth(GRID_SIZE * CELL_SIZE + BORDER_SIZE*(GRID_SIZE+1));
         canvas.setHeight(GRID_SIZE * CELL_SIZE + BORDER_SIZE*(GRID_SIZE+1));
 

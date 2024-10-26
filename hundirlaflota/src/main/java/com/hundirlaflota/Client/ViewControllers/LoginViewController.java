@@ -23,7 +23,6 @@ public class LoginViewController implements Initializable, OnSceneVisible {
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ws = UtilsWS.getSharedInstance(Main.location);
         LoginButton.setOnAction(event -> {
             if (ws.isConnected()) {
                 System.out.println("Login button pressed");
@@ -38,6 +37,7 @@ public class LoginViewController implements Initializable, OnSceneVisible {
 
     @Override
     public void onSceneVisible() {
+        ws = UtilsWS.getSharedInstance(Main.UsedLocation);
         ws.setOnMessage(this::handleLoginMessage);
     }
 

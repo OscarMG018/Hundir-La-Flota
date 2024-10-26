@@ -12,7 +12,7 @@ public class UpdateRoomInfo implements Runnable {
     private UtilsWS ws;
 
     public UpdateRoomInfo() {
-        this.ws = UtilsWS.getSharedInstance(Main.location);
+        this.ws = UtilsWS.getSharedInstance(Main.UsedLocation);
     }
 
     public void run() {

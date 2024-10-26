@@ -37,7 +37,7 @@ class RoomUI {
         Button joinButton = new Button("Join");
         joinButton.getStyleClass().add("room-join-button");
         joinButton.setOnAction(event -> {
-            UtilsWS.getSharedInstance(Main.location).safeSend(new JoinRoomMessage(name).toString());
+            UtilsWS.getSharedInstance(Main.UsedLocation).safeSend(new JoinRoomMessage(name).toString());
         });
         hbox.getChildren().addAll(nameLabel, playersLabel, joinButton);
         hbox.getStyleClass().add("room-container");
@@ -45,10 +45,9 @@ class RoomUI {
     }
 }
 
-
 public class RoomListViewController implements Initializable, OnSceneVisible {
     @FXML
-    private VBox RoomsVBox;
+    private VBox RoomsList;
     @FXML
     private Button CreateRoomButton;
 
@@ -62,7 +61,6 @@ public class RoomListViewController implements Initializable, OnSceneVisible {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ws = UtilsWS.getSharedInstance(Main.location);
         CreateRoomButton.setOnAction(event -> {
             CreateRoom();
         });
@@ -70,9 +68,10 @@ public class RoomListViewController implements Initializable, OnSceneVisible {
 
     @Override
     public void onSceneVisible() {
+        ws = UtilsWS.getSharedInstance(Main.UsedLocation);
         ws.setOnMessage(this::handleListRoomsMessage);
         ws.safeSend(new ListRoomsMessage().toString());
-        updateRoomList = new UpdateRoomList(ws);
+        updateRoomList = new UpdateRoomList();
         Thread updateRoomListThread = new Thread(updateRoomList);
         updateRoomListThread.start();
     }
@@ -84,20 +83,20 @@ public class RoomListViewController implements Initializable, OnSceneVisible {
             MessageType requestType = MessageType.valueOf(json.getString("requestType"));
             if (requestType == MessageType.LIST_ROOMS) {
                 JSONArray rooms = json.getJSONArray("data");
-                if (rooms.length() == 0) {
-                    System.out.println("No rooms found");
-                    Platform.runLater(() -> {
-                        RoomsVBox.getChildren().clear();
-                        RoomsVBox.getChildren().add(new Label("No rooms found"));
-                    });
-                }
-                for (int i = 0; i < rooms.length(); i++) {
-                    JSONObject room = rooms.getJSONObject(i);
-                    Platform.runLater(() -> {
-                        RoomsVBox.getChildren().clear();
-                        RoomsVBox.getChildren().add(new RoomUI(room.getString("name"), room.getInt("players")).getUI());
-                    });
-                }
+                Platform.runLater(() -> {
+                    if (rooms.length() == 0) {
+                        System.out.println("No rooms found");
+                        RoomsList.getChildren().clear();
+                        RoomsList.getChildren().add(new Label("No rooms found"));
+                    }  
+                    else {
+                        RoomsList.getChildren().clear();
+                        for (int i = 0; i < rooms.length(); i++) {
+                            JSONObject room = rooms.getJSONObject(i);
+                            RoomsList.getChildren().add(new RoomUI(room.getString("name"), room.getInt("players")).getUI());
+                        } 
+                    }
+                });
             }
             else if (requestType == MessageType.CREATE_ROOM) {
                 updateRoomList.stop();
