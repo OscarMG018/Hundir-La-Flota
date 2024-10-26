@@ -1,4 +1,4 @@
-package com.hundirlaflota.Common;
+package com.hundirlaflota.Client.Utils;
 
 public class Position {
     private int x;
@@ -23,5 +23,9 @@ public class Position {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public String toString() {
+        return "{\"x\": " + x + ", \"y\": " + y + "}";
     }
 }

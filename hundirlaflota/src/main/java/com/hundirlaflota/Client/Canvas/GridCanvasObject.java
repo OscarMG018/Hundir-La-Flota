@@ -2,9 +2,14 @@ package com.hundirlaflota.Client.Canvas;
 
 import java.util.ArrayList;
 
+import com.hundirlaflota.Client.Main;
+import com.hundirlaflota.Client.Utils.UtilsWS;
+
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.input.MouseEvent;
+
+import com.hundirlaflota.Common.ServerMessages.ShootMessage;
 
 public class GridCanvasObject extends CanvasObject {
     private int gridSize;
@@ -12,13 +17,32 @@ public class GridCanvasObject extends CanvasObject {
     private GridCell[][] cells;
     private GridCell hoveredCell;
     private ArrayList<ShipCanvasObject> ships;
+    private UtilsWS ws;
+    private boolean sendMouseOver = false;
+    private Runnable onShipsSet;
 
     public GridCanvasObject(double x, double y, double size, int zIndex, int gridSize, double borderSize) {
         super(x, y, size, size, zIndex);
         this.gridSize = gridSize;
         this.borderSize = borderSize;
-        this.ships = ships;
+        this.ships = new ArrayList<>();
         initializeCells();
+        this.isClickable = false;
+        this.sendMouseOver = false;
+        this.ws = UtilsWS.getSharedInstance(Main.UsedLocation);
+        this.onShipsSet = null;
+    }
+
+    public void setClickable(boolean isClickable) {
+        this.isClickable = isClickable;
+    }
+
+    public void setSendMouseOver(boolean sendMouseOver) {
+        this.sendMouseOver = sendMouseOver;
+    }
+
+    public void setOnShipsSet(Runnable onShipsSet) {
+        this.onShipsSet = onShipsSet;
     }
 
     public void setShipOnGrid(ArrayList<ShipCanvasObject> ships) {
@@ -131,17 +155,30 @@ public class GridCanvasObject extends CanvasObject {
                     center[1] -= getCellSize() * SectionHeld;
                 }
                 ((ShipCanvasObject) source).setPosition(center[0], center[1]);
-                
+                if (onShipsSet != null) {
+                    onShipsSet.run();
+                }
             }
         }
     }
 
     @Override
     public void OnMouseOver(MouseEvent event) {
+        if (!sendMouseOver)
+            return;
         GridCell cell = getCellFromPoint(event.getX(), event.getY());
         if (cell != null && cell != hoveredCell) {
             //System.out.println("Mouse entered cell: " + cell.getRow() + ", " + cell.getCol());
             hoveredCell = cell;
+        }
+    }
+
+
+    @Override
+    public void OnClick(MouseEvent event) {
+        GridCell cell = getCellFromPoint(event.getX(), event.getY());
+        if (cell != null) {
+            ws.safeSend(new ShootMessage(cell.getRow(), cell.getCol()).toString());
         }
     }
 

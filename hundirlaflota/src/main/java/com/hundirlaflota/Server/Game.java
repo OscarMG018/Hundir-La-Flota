@@ -1,4 +1,4 @@
-package com.hundirlaflota.Common;
+package com.hundirlaflota.Server;
 import java.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,33 +9,14 @@ import java.io.File;
 import java.io.IOException;
 
 public class Game {
-    private ArrayList<String> shipsPlayer1;
-    private ArrayList<String> shipsPlayer2;
-    private boolean player1Turn;
-    private boolean player2Turn;    
-    
-    public Game() {
-        
-        shipsPlayer1 = new ArrayList<>();
-        shipsPlayer2 = new ArrayList<>();
-        player1Turn = true;
-        player2Turn = false;
-    }
 
-    public ArrayList<String> getShipsPlayer1() {
-        return shipsPlayer1;
-    }
-
-    public void setShipsPlayer1(ArrayList<String> shipsPlayer1) {
-        this.shipsPlayer1 = shipsPlayer1;
-    }
-
-    public ArrayList<String> getShipsPlayer2() {
-        return shipsPlayer2;
-    }
-
-    public void setShipsPlayer2(ArrayList<String> shipsPlayer2) {
-        this.shipsPlayer2 = shipsPlayer2;
+    public enum ShootResult {
+        HIT,
+        MISS,
+        SUNK,
+        END,
+        INVALID,
+        ERROR
     }
 
     public static void modifyJson(String jsonFileName, String key, String newValue) {
@@ -57,7 +38,7 @@ public class Game {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode rootNode = objectMapper.createObjectNode();
 
-        for (char ch = 'a'; ch <= 'j'; ch++) {
+        for (char ch = 'A'; ch <= 'J'; ch++) {
             for (int num = 1; num <= 10; num++) {
                 String key = ch + String.valueOf(num);
                 rootNode.put(key, "");  
@@ -72,9 +53,8 @@ public class Game {
         }
     }
 
-
-    public boolean playShips(String jsonFileName, String coordinate) {
-        List<String> shipNames = Arrays.asList("aircraft carrier", "battleship", "cruiser", "submarine", "destroyer");
+    public static ShootResult playShips(String jsonFileName, String coordinate) {
+        List<String> shipNames = Arrays.asList("aircraftcarrier", "battleship", "cruiser", "submarine", "destroyer");
         ObjectMapper objectMapper = new ObjectMapper();
         String FileName = jsonFileName;
         try {
@@ -103,33 +83,73 @@ public class Game {
                                 }
                             }
                             objectMapper.writeValue(jsonFile, rootNode);
+                            if (checkIfLost(jsonFileName)) {
+                                return ShootResult.END;
+                            } else {
+                                return ShootResult.SUNK;
+                            }
                         }
-                        return true;
+                        return ShootResult.HIT;
                     }
                 }
                 ((ObjectNode) rootNode).put(coordinate, "water");
                 objectMapper.writeValue(jsonFile, rootNode);
-                if (player.equals("player1")) {
-                    this.player1Turn = true;
-                    this.player2Turn = false;
-                } else {
-                    this.player1Turn = false;
-                    this.player2Turn = true;
-                }
-                return false;
+                return ShootResult.MISS;
             } else {
-                return false;
+                return ShootResult.INVALID;
             }
         } catch (IOException e) {
-            return false;
+            return ShootResult.ERROR;
         }
     }
 
+    public static boolean checkIfLost(String jsonFileName) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<String> shipNames = Arrays.asList("aircraftcarrier", "battleship", "cruiser", "submarine", "destroyer");
+        try {
+            File jsonFile = new File(jsonFileName);
+            JsonNode rootNode = objectMapper.readTree(jsonFile);
+            for (JsonNode node : rootNode) {
+                if (node.fieldNames().next().equals("playerPosition") || node.fieldNames().next().equals("playerName")) {
+                    continue;
+                }
+                if (shipNames.contains(node.asText())) {
+                    // there is a part of a ship that is not damaged
+                    return false;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean areShipsReady(String jsonFileName) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            File jsonFile = new File(jsonFileName);
+            JsonNode rootNode = objectMapper.readTree(jsonFile);
+            for (JsonNode node : rootNode) {
+                //if the field is PlayerPosition or playerName, continue
+                if (node.fieldNames().next().equals("playerPosition") || node.fieldNames().next().equals("playerName")) {
+                    continue;
+                }
+                if (!node.asText().isEmpty()) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return false;
+    }
+
     public static boolean putShip(String jsonFileName, String coordinate, String ship, boolean isVertical) {
-        String FileName = jsonFileName;
         int shipSize;
         switch (ship.toLowerCase()) {
-            case "aircraft carrier":
+            case "aircraftcarrier":
                 shipSize = 5;
                 break;
             case "battleship":

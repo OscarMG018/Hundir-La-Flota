@@ -29,9 +29,6 @@ public class LoginViewController implements Initializable, OnSceneVisible {
                 String username = LoginTextField.getText();
                 ws.safeSend(new LoginMessage(username).toString());
             }
-            else {
-                //TODO: Show Error message (unable to connect to the server)
-            }
         });
     }
 
@@ -53,7 +50,7 @@ public class LoginViewController implements Initializable, OnSceneVisible {
                 });
             }
         } else if (type == MessageType.ERROR) {
-            System.out.println("Error: " + json.getString("message"));//TODO: Show error in the UI
+            System.out.println("Error: " + json.getString("message"));
         }
     }
     

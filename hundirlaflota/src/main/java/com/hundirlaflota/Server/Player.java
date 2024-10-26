@@ -1,4 +1,4 @@
-package com.hundirlaflota.Common;
+package com.hundirlaflota.Server;
 
 import org.java_websocket.WebSocket;
 

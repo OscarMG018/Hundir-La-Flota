@@ -1,12 +1,12 @@
 package com.hundirlaflota.Common.ServerMessages;
 
-public class MousePositionMessage extends ServerMessage {
+public class ShootMessage extends ServerMessage {
 
     private int x;
     private int y;
 
-    public MousePositionMessage(int x, int y) {
-        this.type = MessageType.MOUSE_POSITION;
+    public ShootMessage(int y, int x) {
+        this.type = MessageType.SHOOT;
         this.x = x;
         this.y = y;
     }
@@ -17,6 +17,11 @@ public class MousePositionMessage extends ServerMessage {
                 "type:\"" + type.toString() + "\"" +
                 ", x:\"" + x + "\"" +
                 ", y:\"" + y + "\"" +
+                ", coordinate:\"" + toCoordinate() + "\"" +
                 "}";
+    }
+
+    public String toCoordinate() {
+        return (char) ('A' + y) + "" + (x + 1);
     }
 }

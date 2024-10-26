@@ -39,8 +39,10 @@ public class Main extends Application {
             if (c2.getUpdateThread() != null) {
                 c2.getUpdateThread().stop();
             }
-            UtilsWS.getSharedInstance(UsedLocation).close();
-            System.out.println("Closing connection");
+            UtilsWS ws = UtilsWS.getSharedInstance(UsedLocation);
+            if (ws != null) {
+                ws.close();
+            }
         });
         primaryStage.show();
     }

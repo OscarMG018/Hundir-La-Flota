@@ -14,8 +14,8 @@ public enum MessageType {
     MOUSE_POSITION,
     PUT_SHIPS,
     STARTING_PLAYER,
-    PLAY_MOVE,
-    HIT_RESULT, //hit or water
+    SHOOT,
+    SHOOT_RESULT,
     PASS_TURN,
     END_GAME,
     ERROR

@@ -13,11 +13,14 @@ import org.json.*;
 import com.hundirlaflota.Client.Main;
 import com.hundirlaflota.Common.ServerMessages.*;
 import javafx.application.Platform;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import com.hundirlaflota.Client.Utils.*;
 
-class RoomUI {
+class RoomUI extends Node {
     private String name;
     private int players;
 
@@ -42,6 +45,10 @@ class RoomUI {
         hbox.getChildren().addAll(nameLabel, playersLabel, joinButton);
         hbox.getStyleClass().add("room-container");
         return hbox;
+    }
+
+    public String getName() {
+        return name;
     }
 }
 
@@ -90,11 +97,7 @@ public class RoomListViewController implements Initializable, OnSceneVisible {
                         RoomsList.getChildren().add(new Label("No rooms found"));
                     }  
                     else {
-                        RoomsList.getChildren().clear();
-                        for (int i = 0; i < rooms.length(); i++) {
-                            JSONObject room = rooms.getJSONObject(i);
-                            RoomsList.getChildren().add(new RoomUI(room.getString("name"), room.getInt("players")).getUI());
-                        } 
+                        UpdateRoomList(rooms);
                     }
                 });
             }
@@ -111,7 +114,7 @@ public class RoomListViewController implements Initializable, OnSceneVisible {
                 });
             }
         } else if (type == MessageType.ERROR) {
-            System.out.println("Error: " + json.getString("message"));//TODO: Show error in the UI 
+            System.out.println("Error: " + json.getString("message"));
         }
     }
 
@@ -133,6 +136,28 @@ public class RoomListViewController implements Initializable, OnSceneVisible {
             ws.safeSend(new CreateRoomMessage(result.get()).toString());
         }
     }
+       
+    public void UpdateRoomList(JSONArray rooms) {
+        Platform.runLater(() -> {
+            RoomsList.getChildren().clear();
+            for (int i = 0; i < rooms.length(); i++) {
+                JSONObject room = rooms.getJSONObject(i);
+                RoomsList.getChildren().add(new RoomUI(room.getString("name"), room.getInt("players")).getUI());
+            }
+        });
+        //New version
+        Map<String, RoomUI> originalMap = new HashMap<String, RoomUI>();
+        Map<String, JSONObject> modifiedMap = new HashMap<String, JSONObject>();
         
-        
+        for (Node node : RoomsList.getChildren()) {
+            RoomUI roomUI = (RoomUI) node;
+            String roomName = roomUI.getName();
+            originalMap.put(roomName, roomUI);
+        }
+        for (int i = 0; i < rooms.length(); i++) {
+            JSONObject room = rooms.getJSONObject(i);
+            modifiedMap.put(room.getString("name"), room);
+        }
+
+    }
 }
