@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.json.JSONObject;
-import org.json.JSONObject;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -13,12 +12,10 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert;
 
 import com.hundirlaflota.Client.Main;
 import com.hundirlaflota.Client.Utils.*;
 import com.hundirlaflota.Client.Utils.Observable.ObservableCollection;
-import com.hundirlaflota.Common.ServerMessages.MessageType;
 import com.hundirlaflota.Common.ServerMessages.MessageType;
 import com.hundirlaflota.Client.Canvas.*;
 
@@ -41,7 +38,6 @@ public class NoTurnViewController implements Initializable, OnSceneVisible {
     @Override
     public void onSceneVisible() {
         ws = UtilsWS.getSharedInstance(Main.UsedLocation);
-        ws.setOnMessage(this::handleMessage);
         ws.setOnMessage(this::handleMessage);
         canvasManager.clear();
         canvasManager.addObject(grid);
@@ -80,14 +76,7 @@ public class NoTurnViewController implements Initializable, OnSceneVisible {
 
             GridCanvasObject grid = new GridCanvasObject(0, 0, canvas.getWidth(), 0, GRID_SIZE, 0);
             canvasManager.addObject(grid);
-            canvasManager.clear();
-
-            GridCanvasObject grid = new GridCanvasObject(0, 0, canvas.getWidth(), 0, GRID_SIZE, 0);
-            canvasManager.addObject(grid);
             // Draw my attacks
-            for (Position pos : opponentAttacks) {
-                double[] cellCenter = grid.getCellCenter(pos.getY(), pos.getX());
-                if (myShips.stream().anyMatch(ship -> ship.isPointInObject(cellCenter[0], cellCenter[1]))) {
             for (Position pos : opponentAttacks) {
                 double[] cellCenter = grid.getCellCenter(pos.getY(), pos.getX());
                 if (myShips.stream().anyMatch(ship -> ship.isPointInObject(cellCenter[0], cellCenter[1]))) {
@@ -100,8 +89,6 @@ public class NoTurnViewController implements Initializable, OnSceneVisible {
                 grid.setCellColor(opponentPosition.getY(), opponentPosition.getX(), Color.YELLOW);
             }
             // Draw opponent's ships
-            for (ShipCanvasObject ship : myShips) {
-                canvasManager.addObject(ship);
             for (ShipCanvasObject ship : myShips) {
                 canvasManager.addObject(ship);
             }

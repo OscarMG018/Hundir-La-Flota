@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import com.hundirlaflota.Client.Main;
 import com.hundirlaflota.Client.Utils.UtilsWS;
 
-import com.hundirlaflota.Client.Main;
-import com.hundirlaflota.Client.Utils.UtilsWS;
-
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.input.MouseEvent;
@@ -24,33 +21,13 @@ public class GridCanvasObject extends CanvasObject {
     private UtilsWS ws;
     private boolean sendMouseOver = false;
     private Runnable onShipsSet;
-    private UtilsWS ws;
-    private boolean sendMouseOver = false;
-    private Runnable onShipsSet;
 
     public GridCanvasObject(double x, double y, double size, int zIndex, int gridSize, double borderSize) {
         super(x, y, size, size, zIndex);
         this.gridSize = gridSize;
         this.borderSize = borderSize;
         this.ships = new ArrayList<>();
-        this.ships = new ArrayList<>();
         initializeCells();
-        this.isClickable = false;
-        this.sendMouseOver = false;
-        this.ws = UtilsWS.getSharedInstance(Main.UsedLocation);
-        this.onShipsSet = null;
-    }
-
-    public void setClickable(boolean isClickable) {
-        this.isClickable = isClickable;
-    }
-
-    public void setSendMouseOver(boolean sendMouseOver) {
-        this.sendMouseOver = sendMouseOver;
-    }
-
-    public void setOnShipsSet(Runnable onShipsSet) {
-        this.onShipsSet = onShipsSet;
         this.isClickable = false;
         this.sendMouseOver = false;
         this.ws = UtilsWS.getSharedInstance(Main.UsedLocation);
@@ -185,8 +162,6 @@ public class GridCanvasObject extends CanvasObject {
 
     @Override
     public void OnMouseOver(MouseEvent event) {
-        if (!sendMouseOver)
-            return;
         if (!sendMouseOver)
             return;
         GridCell cell = getCellFromPoint(event.getX(), event.getY());
