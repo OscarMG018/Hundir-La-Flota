@@ -1,11 +1,14 @@
 package com.hundirlaflota.Client.Canvas;
 
-import com.hundirlaflota.Common.Ship;
-import com.hundirlaflota.Common.Position;
+import java.util.ArrayList;
+
+import org.json.JSONObject;
+
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.*;
-import javafx.scene.paint.Color;
+import com.hundirlaflota.Client.Utils.*;
+import com.hundirlaflota.Common.ServerMessages.ShipData;
 
 public class ShipCanvasObject extends CanvasObject {
 
@@ -18,6 +21,8 @@ public class ShipCanvasObject extends CanvasObject {
     private double cellSize;
     private double dragx = 0;
     private double dragy = 0;
+    private Position cellPosition;
+
 
 
     public ShipCanvasObject(String ShipName, double X, double Y, double cellSize, int size, int zIndex, boolean isDraggable, boolean horizontal) {
@@ -27,6 +32,8 @@ public class ShipCanvasObject extends CanvasObject {
         this.isDraggable = isDraggable;
         this.horizontal = horizontal;
         this.cellSize = cellSize;
+        this.isClickable = false;
+        this.cellPosition = new Position(-1, -1);
     }
 
     public int getSize() {
@@ -94,12 +101,6 @@ public class ShipCanvasObject extends CanvasObject {
         y = dragy;
     }
 
-    public void OnClick(MouseEvent event) {
-        if (dragging && event.getButton() == MouseButton.SECONDARY) {
-            this.horizontal = !this.horizontal;
-        }
-    }
-
     public int getShipSection() {
         double cellWidth = horizontal ? width / size : width;
         double cellHeight = horizontal ? height : height / size;
@@ -113,14 +114,43 @@ public class ShipCanvasObject extends CanvasObject {
         
         // Ensure the section is within the valid range
         section = Math.max(0, Math.min(section, size - 1));
-        System.out.println("Ship section: " + section);
         return section;
     }
 
-    public Ship getShip() {
-        int gridX = (int) (x / cellSize);
-        int gridY = (int) (y / cellSize);
-        Position position = new Position(gridX, gridY);
-        return new Ship(ShipName, size, position, horizontal ? Ship.ShipPosition.HORIZONTAL : Ship.ShipPosition.VERTICAL);
+    public static ShipCanvasObject fromJson(JSONObject jsonObject, double cellSize, double Gridx, double Gridy) {
+        String ShipName = jsonObject.getString("shipName");
+        boolean horizontal = !jsonObject.getBoolean("isVertical");
+        double x = jsonObject.getInt("x") * cellSize + Gridx;
+        double y = jsonObject.getInt("y") * cellSize + Gridy;
+        int size = getSizeFromShipName(ShipName);
+        return new ShipCanvasObject(ShipName, x, y, cellSize, size, 1, false, horizontal);
+    }
+
+    public ShipData getShipData(double Gridx, double Gridy, double cellSize) {
+        int[] position = getPosition(Gridx, Gridy, cellSize);
+        return new ShipData(ShipName, !horizontal, position[0], position[1]);
+    }
+
+    private static int getSizeFromShipName(String shipName) {
+        switch (shipName.toLowerCase()) {
+            case "aircraftcarrier": return 5;
+            case "battleship": return 4;
+            case "cruiser": return 3;
+            case "submarine": return 3;
+            case "destroyer": return 2;
+        }
+        return 0;
+    }
+
+    public int[] getPosition(double Gridx, double Gridy, double cellSize) {
+        return new int[] {(int) ((x-Gridx)/cellSize), (int) ((y-Gridy)/cellSize)};
+    }
+
+    public void setCellPosition(int row, int col) {
+        this.cellPosition = new Position(row, col);
+    }
+
+    public Position getCellPosition() {
+        return cellPosition;
     }
 }

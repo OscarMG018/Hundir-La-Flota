@@ -1,4 +1,4 @@
-package com.hundirlaflota.Common;
+package com.hundirlaflota.Client.Utils;
 
 public class Position {
     private int x;

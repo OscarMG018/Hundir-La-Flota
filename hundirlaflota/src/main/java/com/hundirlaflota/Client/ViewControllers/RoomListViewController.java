@@ -13,37 +13,13 @@ import org.json.*;
 import com.hundirlaflota.Client.Main;
 import com.hundirlaflota.Common.ServerMessages.*;
 import javafx.application.Platform;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import com.hundirlaflota.Client.Utils.*;
 
-class RoomUI {
-    private String name;
-    private int players;
-
-    public RoomUI(String name, int players) {
-        this.name = name;
-        this.players = players;
-    }
-
-    public Node getUI() {
-        HBox hbox = new HBox();
-        hbox.setAlignment(Pos.CENTER);
-        hbox.setSpacing(10);
-        Label nameLabel = new Label(name);
-        nameLabel.getStyleClass().add("room-name");
-        Label playersLabel = new Label(players + "/2");
-        playersLabel.getStyleClass().add("room-players");
-        Button joinButton = new Button("Join");
-        joinButton.getStyleClass().add("room-join-button");
-        joinButton.setOnAction(event -> {
-            UtilsWS.getSharedInstance(Main.UsedLocation).safeSend(new JoinRoomMessage(name).toString());
-        });
-        hbox.getChildren().addAll(nameLabel, playersLabel, joinButton);
-        hbox.getStyleClass().add("room-container");
-        return hbox;
-    }
-}
 
 public class RoomListViewController implements Initializable, OnSceneVisible {
     @FXML
@@ -85,16 +61,11 @@ public class RoomListViewController implements Initializable, OnSceneVisible {
                 JSONArray rooms = json.getJSONArray("data");
                 Platform.runLater(() -> {
                     if (rooms.length() == 0) {
-                        System.out.println("No rooms found");
                         RoomsList.getChildren().clear();
                         RoomsList.getChildren().add(new Label("No rooms found"));
                     }  
                     else {
-                        RoomsList.getChildren().clear();
-                        for (int i = 0; i < rooms.length(); i++) {
-                            JSONObject room = rooms.getJSONObject(i);
-                            RoomsList.getChildren().add(new RoomUI(room.getString("name"), room.getInt("players")).getUI());
-                        } 
+                        UpdateRoomList(rooms);
                     }
                 });
             }
@@ -111,7 +82,7 @@ public class RoomListViewController implements Initializable, OnSceneVisible {
                 });
             }
         } else if (type == MessageType.ERROR) {
-            System.out.println("Error: " + json.getString("message"));//TODO: Show error in the UI 
+            System.out.println("Error: " + json.getString("message"));
         }
     }
 
@@ -133,6 +104,42 @@ public class RoomListViewController implements Initializable, OnSceneVisible {
             ws.safeSend(new CreateRoomMessage(result.get()).toString());
         }
     }
+       
+    public void UpdateRoomList(JSONArray rooms) {
+        Map<String, RoomUI> originalMap = new HashMap<String, RoomUI>();
+        Map<String, JSONObject> modifiedMap = new HashMap<String, JSONObject>();
         
-        
+        for (Node node : RoomsList.getChildren()) {
+            if (node instanceof RoomUI) {
+                RoomUI roomUI = (RoomUI) node;
+                String roomName = roomUI.getName();
+                originalMap.put(roomName, roomUI);
+            }
+        }
+        for (int i = 0; i < rooms.length(); i++) {
+            JSONObject room = rooms.getJSONObject(i);
+            modifiedMap.put(room.getString("name"), room);
+        }
+        for (String key : originalMap.keySet()) {
+            if (!modifiedMap.containsKey(key)) {
+                //Room has been deleted
+                RoomsList.getChildren().remove(originalMap.get(key));
+            }
+            else {
+                //Room may have been modified
+                RoomUI roomUI = originalMap.get(key);
+                roomUI.setPlayers(modifiedMap.get(key).getInt("players"));
+            }
+        }
+        for (String key : modifiedMap.keySet()) {
+            if (!originalMap.containsKey(key)) {
+                //Room has been created
+                if (RoomsList.getChildren().size() == 1 && RoomsList.getChildren().get(0) instanceof Label) {
+                    //the room was the first created
+                    RoomsList.getChildren().remove(0);
+                }
+                RoomsList.getChildren().add(new RoomUI(modifiedMap.get(key).getString("name"), modifiedMap.get(key).getInt("players")));
+            }
+        }
+    }
 }

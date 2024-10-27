@@ -1,7 +1,9 @@
-package com.hundirlaflota.Common;
+package com.hundirlaflota.Server;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import org.json.JSONObject;
+import com.hundirlaflota.Common.ServerMessages.ShipData;
 
 public class Room implements Serializable {
    private String name = "";
@@ -9,13 +11,16 @@ public class Room implements Serializable {
    private Player invite;
    private boolean hostReady;
    private boolean inviteReady;
-   private Game game;
+   private ArrayList<ShipData> hostShips;
+   private ArrayList<ShipData> inviteShips;
 
    public Room(Player host, String name) {
-    this.host = host;
-    this.name = name;
-    this.hostReady = false;
-    this.inviteReady = false;
+      this.host = host;
+      this.name = name;
+      this.hostReady = false;
+      this.inviteReady = false;
+      this.hostShips = new ArrayList<>();
+      this.inviteShips = new ArrayList<>();
    }
 
    public int getPlayerCount() {
@@ -114,7 +119,23 @@ public class Room implements Serializable {
       invite = null;
    }
 
-   public void StartGame() {
-      
+   public ArrayList<ShipData> getHostShips() {
+      return hostShips;
    }
+
+   public void setHostShips(ArrayList<ShipData> hostShips) {
+      this.hostShips = hostShips;
+   }
+
+   public ArrayList<ShipData> getInviteShips() {
+      return inviteShips;
+   }
+
+   public void setInviteShips(ArrayList<ShipData> inviteShips) {
+      this.inviteShips = inviteShips;
+   }
+
+   public boolean areShipsReady() {
+      return hostShips.size() == inviteShips.size() && hostShips.size() > 0;
+}
 }

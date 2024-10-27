@@ -4,28 +4,27 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 
+import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.List;
-import javafx.scene.input.MouseButton;
 
 public class CanvasManager {
     private Canvas canvas;
     private GraphicsContext gc;
     private CopyOnWriteArrayList<CanvasObject> objects;
 
-    private CanvasObject hoverObject;
+    private ArrayList<CanvasObject> hoverObjects;
     private CanvasObject dragObject;
 
     public CanvasManager(Canvas canvas) {
         this.canvas = canvas;
         this.gc = canvas.getGraphicsContext2D();
         this.objects = new CopyOnWriteArrayList<>();
-
+        this.hoverObjects = new ArrayList<>();
         setupEventHandlers();
     }
 
-    public CanvasObject getHoverObject() {
-        return hoverObject;
+    public ArrayList<CanvasObject> getHoverObjects() {
+        return hoverObjects;
     }
 
     public CanvasObject getDragObject() {
@@ -80,9 +79,8 @@ public class CanvasManager {
     }
 
     private void handleMouseClick(MouseEvent event) {
-        System.out.println("Mouse clicked");
         for (CanvasObject object : objects) {
-            if (isPointInObject(event.getX(), event.getY(), object)) {
+            if (object.isClickable() && isPointInObject(event.getX(), event.getY(), object)) {
                 object.OnClick(event);
                 break;
             }
@@ -93,14 +91,13 @@ public class CanvasManager {
     private void handleMouseMove(MouseEvent event) {
         for (CanvasObject object : objects) {
             if (isPointInObject(event.getX(), event.getY(), object)) {
-                if (hoverObject != object) {
-                    hoverObject = object;
-                    hoverObject.OnMouseEnter(event);
+                if (!hoverObjects.contains(object)) {
+                    hoverObjects.add(object);
+                    object.OnMouseEnter(event);
                 }
                 object.OnMouseOver(event);
-                break;
-            } else if (hoverObject == object) {
-                hoverObject = null;
+            } else if (hoverObjects.contains(object)) {
+                hoverObjects.remove(object);
                 object.OnMouseExit(event);
             }
         }
@@ -129,13 +126,11 @@ public class CanvasManager {
     private void handleMouseRelease(MouseEvent event) {
         for (CanvasObject object : objects) {
             if (object.isDraggable && isPointInObject(event.getX(), event.getY(), object)) {
-                System.out.println("OnDragEnd");
                 object.OnDragEnd(event);
                 for (CanvasObject object2 : objects) {
                     if (object2 == object)
                         continue;
                     if (isPointInObject(event.getX(), event.getY(), object2)) {
-                        System.out.println("OnDrop");
                         object2.OnDrop(event, object);
                         break;
                     }

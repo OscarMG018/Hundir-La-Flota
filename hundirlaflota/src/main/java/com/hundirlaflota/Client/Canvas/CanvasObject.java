@@ -14,6 +14,7 @@ public abstract class CanvasObject {
     protected int zIndex;
     protected ArrayList<CanvasObject> children = new ArrayList<>();
     protected boolean isDraggable = false;
+    protected boolean isClickable = false;
 
     public CanvasObject(double x, double y, double width, double height, int zIndex) {
         this.x = x;
@@ -100,5 +101,13 @@ public abstract class CanvasObject {
     public void setPosition(double x, double y) {
         this.x = x - width / 2;
         this.y = y - height / 2;
+    }
+
+    public boolean isClickable() {
+        return isClickable;
+    }
+    
+    public void setClickable(boolean isClickable) {
+        this.isClickable = isClickable;
     }
 }

@@ -2,9 +2,15 @@ package com.hundirlaflota.Client.Canvas;
 
 import java.util.ArrayList;
 
+import com.hundirlaflota.Client.Main;
+import com.hundirlaflota.Client.Utils.UtilsWS;
+
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.input.MouseEvent;
+
+import com.hundirlaflota.Common.ServerMessages.MousePositionMessage;
+import com.hundirlaflota.Common.ServerMessages.ShootMessage;
 
 public class GridCanvasObject extends CanvasObject {
     private int gridSize;
@@ -12,13 +18,32 @@ public class GridCanvasObject extends CanvasObject {
     private GridCell[][] cells;
     private GridCell hoveredCell;
     private ArrayList<ShipCanvasObject> ships;
+    private UtilsWS ws;
+    private boolean sendMouseOver = false;
+    private Runnable onShipsSet;
 
     public GridCanvasObject(double x, double y, double size, int zIndex, int gridSize, double borderSize) {
         super(x, y, size, size, zIndex);
         this.gridSize = gridSize;
         this.borderSize = borderSize;
-        this.ships = ships;
+        this.ships = new ArrayList<>();
         initializeCells();
+        this.isClickable = false;
+        this.sendMouseOver = false;
+        this.ws = UtilsWS.getSharedInstance(Main.UsedLocation);
+        this.onShipsSet = null;
+    }
+
+    public void setClickable(boolean isClickable) {
+        this.isClickable = isClickable;
+    }
+
+    public void setSendMouseOver(boolean sendMouseOver) {
+        this.sendMouseOver = sendMouseOver;
+    }
+
+    public void setOnShipsSet(Runnable onShipsSet) {
+        this.onShipsSet = onShipsSet;
     }
 
     public void setShipOnGrid(ArrayList<ShipCanvasObject> ships) {
@@ -76,12 +101,10 @@ public class GridCanvasObject extends CanvasObject {
     public boolean isPositionValid(int row, int col,int SectionHeld,int size,boolean isHorizontal,ShipCanvasObject placedShip) {
         if (isHorizontal) {
             if (col + size - SectionHeld > gridSize || col - SectionHeld < 0) {
-                System.out.println("out of bound");
                 return false;
             }
         } else {
             if (row + size - SectionHeld > gridSize || row - SectionHeld < 0) {
-                System.out.println("out of bound");
                 return false;
             }
         }
@@ -101,12 +124,10 @@ public class GridCanvasObject extends CanvasObject {
                 if (ship.equals(placedShip))
                     continue;
                 if (ship.isPointInObject(center[0],center[1])) {
-                    System.out.println("ships in the way");
                     return false;
                 }
             }
         }
-        System.out.println("true");
         return true;
     }
 
@@ -131,17 +152,32 @@ public class GridCanvasObject extends CanvasObject {
                     center[1] -= getCellSize() * SectionHeld;
                 }
                 ((ShipCanvasObject) source).setPosition(center[0], center[1]);
-                
+                ((ShipCanvasObject) source).setCellPosition(cell.getRow(), cell.getCol());
+                if (onShipsSet != null) {
+                    onShipsSet.run();
+                }
             }
         }
     }
 
     @Override
     public void OnMouseOver(MouseEvent event) {
+        if (!sendMouseOver)
+            return;
         GridCell cell = getCellFromPoint(event.getX(), event.getY());
         if (cell != null && cell != hoveredCell) {
-            //System.out.println("Mouse entered cell: " + cell.getRow() + ", " + cell.getCol());
+            ws.safeSend(new MousePositionMessage(cell.getCol(), cell.getRow()).toString());
             hoveredCell = cell;
+        }
+    }
+
+
+    @Override
+    public void OnClick(MouseEvent event) {
+        GridCell cell = getCellFromPoint(event.getX(), event.getY());
+        if (cell != null) {
+            System.out.println("Shooting at: " + cell.getCol() + ", " + cell.getRow());
+            ws.safeSend(new ShootMessage(cell.getCol(), cell.getRow()).toString());
         }
     }
 

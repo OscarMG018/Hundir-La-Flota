@@ -6,9 +6,10 @@ import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 
 import java.util.ArrayList;
+import java.util.Random;
+
 import org.json.*;
 
-import com.hundirlaflota.Common.*;
 import com.hundirlaflota.Common.ServerMessages.*;
 
 public class Server extends WebSocketServer {
@@ -17,6 +18,7 @@ public class Server extends WebSocketServer {
   private ArrayList<Room> rooms = new ArrayList<>();
 
   public static void main(String[] args) {
+    Game.init();
     int port = 8080;
     Server server = new Server(new InetSocketAddress("localhost", port));
     server.start();
@@ -59,7 +61,6 @@ public class Server extends WebSocketServer {
 
   @Override
   public void onMessage(WebSocket conn, String message) {
-    System.out.println("Received message: " + message);
     Player player = getPlayerByConn(conn);
     JSONObject json = new JSONObject(message);
     MessageType type;
@@ -110,10 +111,13 @@ public class Server extends WebSocketServer {
         for (Room room : rooms) {
           if (room.getName().equals(roomName)) {
             player.sendMessage(new ErrorMessage("Room name already taken", MessageType.CREATE_ROOM).toString());
-            break;
+            return;
           }
         }
-        //TODO: Check if roomName is not empty
+        if (roomName.isEmpty()) {
+          player.sendMessage(new ErrorMessage("Room name cannot be empty", MessageType.CREATE_ROOM).toString());
+          return;
+        }
         Room room = new Room(player, roomName);
         rooms.add(room);
         player.setRoom(room);
@@ -137,15 +141,14 @@ public class Server extends WebSocketServer {
         player.sendMessage(new AckMessage("", MessageType.JOIN_ROOM).toString());
         break;
       case ROOM_INFO:
+        if (player.getRoom() == null) {
+          player.sendMessage(new ErrorMessage("You are not in a room", MessageType.ROOM_INFO).toString());
+          break;
+        }
         Room playerRoom = player.getRoom();
         JSONObject roomInfo = playerRoom.toJSON();
         roomInfo.put("isHost", playerRoom.isHost(player));
-        if (playerRoom != null) {
-          player.sendMessage(new AckMessage(roomInfo.toString(), MessageType.ROOM_INFO,false).toString());
-        }
-        else {
-          player.sendMessage(new ErrorMessage("You are not in a room", MessageType.ROOM_INFO).toString());
-        }
+        player.sendMessage(new AckMessage(roomInfo.toString(), MessageType.ROOM_INFO,false).toString());
         break;
       case LEAVE_ROOM:
         if (player.getRoom() == null)  {
@@ -177,11 +180,90 @@ public class Server extends WebSocketServer {
         }
         break;
       case START_GAME:
-        System.out.println(message);
+        System.out.println("START_GAME" + json.toString());
+        if (player.getRoom() == null) {
+          player.sendMessage(new ErrorMessage("You are not in a room", MessageType.START_GAME).toString());
+          break;
+        }
+        String hostName = player.getRoom().getHost().getName();
+        String inviteName = player.getRoom().getInvite().getName();
+        String RoomName = player.getRoom().getName();
+        Game.createJson(RoomName + "_" + hostName, hostName);
+        Game.createJson(RoomName + "_" + inviteName, inviteName);
         player.getRoom().getHost().sendMessage(new StartGameMessage().toString());
         player.getRoom().getInvite().sendMessage(new StartGameMessage().toString());
         break;
-      //TODO: Add cases for the game messages
+      case PUT_SHIPS:
+        System.out.println("PUT_SHIPS" + json.toString());
+        if (player.getRoom() == null) {
+          player.sendMessage(new ErrorMessage("You are not in a room", MessageType.PUT_SHIPS).toString());
+          break;
+        }
+        JSONArray ships = json.getJSONArray("ships");
+        String fileName = player.getRoom().getName() + "_" + player.getName();
+        ArrayList<ShipData> shipsData = new ArrayList<>();
+        for (int i = 0; i < ships.length(); i++) {
+          JSONObject ship = ships.getJSONObject(i);
+          System.out.println("putting ship: " + ship.toString());
+          Game.putShip(fileName, ship.getString("coordinate"), ship.getString("shipName"), ship.getBoolean("isVertical"));
+          shipsData.add(ShipData.fromJson(ship));
+        }
+        System.out.println("shipsData: " + shipsData.toString());
+        if (player.getRoom().isHost(player)) {
+          System.out.println("setting host ships");
+          player.getRoom().setHostShips(shipsData);
+        }
+        else {
+          System.out.println("setting invite ships");
+          player.getRoom().setInviteShips(shipsData);
+        }
+        if (player.getRoom().areShipsReady()) {
+          System.out.println("ships are ready");
+          boolean hostStarts = new Random().nextBoolean();
+          player.getRoom().getHost().sendMessage(new StartingPlayerMessage(hostStarts, player.getRoom().getInviteShips()).toString());
+          player.getRoom().getInvite().sendMessage(new StartingPlayerMessage(!hostStarts, player.getRoom().getHostShips()).toString());
+        }
+
+        break;
+      case SHOOT:
+        System.out.println("SHOOT" + json.toString());
+        if (player.getRoom() == null) {
+          player.sendMessage(new ErrorMessage("You are not in a room", MessageType.SHOOT).toString());
+          break;
+        }
+        String coordinate = json.getString("coordinate");
+        String file = player.getRoom().getName() + "_" + (player.getRoom().isHost(player) ? player.getRoom().getInvite().getName() : player.getRoom().getHost().getName());
+        Game.ShootResult result = Game.playShips(file, coordinate);
+        System.out.println("Shoot result: " + result.toString());
+        if (result == Game.ShootResult.END) {
+          player.getRoom().getHost().sendMessage(new EndGameMessage().toString());
+          player.getRoom().getInvite().sendMessage(new EndGameMessage().toString());
+        }
+        else if (result == Game.ShootResult.INVALID) {
+          player.sendMessage(new ErrorMessage("Invalid coordinate", MessageType.SHOOT).toString());
+        }
+        else if (result == Game.ShootResult.ERROR) {
+          player.sendMessage(new ErrorMessage("Server error while shooting", MessageType.SHOOT).toString());
+        }
+        else {
+          player.getRoom().getHost().sendMessage(new ShootResultMessage(coordinate, result.toString()).toString());
+          player.getRoom().getInvite().sendMessage(new ShootResultMessage(coordinate, result.toString()).toString());	
+        }
+        break;
+      case MOUSE_POSITION:
+        if (player.getRoom() == null) {
+          player.sendMessage(new ErrorMessage("You are not in a room", MessageType.MOUSE_POSITION).toString());
+          break;
+        }
+        int x = json.getInt("x");
+        int y = json.getInt("y");
+        if (player.getRoom().isHost(player)) {
+          player.getRoom().getInvite().sendMessage(new MousePositionMessage(x, y).toString());
+        }
+        else {
+          player.getRoom().getHost().sendMessage(new MousePositionMessage(x, y).toString());
+        }
+        break;
       default:
         player.sendMessage(new ErrorMessage("Invalid message type", type).toString());
         break;
