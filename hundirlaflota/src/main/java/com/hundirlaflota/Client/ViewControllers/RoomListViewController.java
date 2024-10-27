@@ -16,6 +16,9 @@ import javafx.application.Platform;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import com.hundirlaflota.Client.Utils.*;
@@ -66,6 +69,7 @@ public class RoomListViewController implements Initializable, OnSceneVisible {
                     }  
                     else {
                         UpdateRoomList(rooms);
+                        UpdateRoomList(rooms);
                     }
                 });
             }
@@ -82,6 +86,7 @@ public class RoomListViewController implements Initializable, OnSceneVisible {
                 });
             }
         } else if (type == MessageType.ERROR) {
+            System.out.println("Error: " + json.getString("message"));
             System.out.println("Error: " + json.getString("message"));
         }
     }

@@ -6,18 +6,28 @@ import java.util.ResourceBundle;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
+import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.application.Platform;
 
 import com.hundirlaflota.Client.Main;
+import com.hundirlaflota.Client.Main;
 import com.hundirlaflota.Client.Canvas.*;
+import com.hundirlaflota.Client.Utils.Position;
+import com.hundirlaflota.Client.Utils.UtilsViews;
+import com.hundirlaflota.Client.Utils.UtilsWS;
+import com.hundirlaflota.Common.ServerMessages.*;
 import com.hundirlaflota.Client.Utils.Position;
 import com.hundirlaflota.Client.Utils.UtilsViews;
 import com.hundirlaflota.Client.Utils.UtilsWS;
@@ -31,11 +41,15 @@ public class ShipsViewController implements Initializable, OnSceneVisible {
     private Canvas canvas;
     @FXML
     private Button SetShipsButton;
+    @FXML
+    private Button SetShipsButton;
     private CanvasManager canvasManager;
     private GridCanvasObject grid;
 
     private ArrayList<ShipCanvasObject> ships;
     private double cellSize;
+
+    private UtilsWS ws;
 
     private UtilsWS ws;
 
@@ -48,11 +62,16 @@ public class ShipsViewController implements Initializable, OnSceneVisible {
         canvasManager.clear();
         grid = new GridCanvasObject(0, 0, canvas.getHeight(), 0, 10, 0);
         grid.setOnShipsSet(this::checkAllShipsSet);
+        grid.setOnShipsSet(this::checkAllShipsSet);
 
         canvasManager.addObject(grid);
         // Add ships to the side
         cellSize = grid.getCellSize();
         ShipCanvasObject ship1 = new ShipCanvasObject("Destroyer", canvas.getHeight() + cellSize, 0, cellSize, 2, 1, true, true);
+        ShipCanvasObject ship2 = new ShipCanvasObject("Cruiser", canvas.getHeight() + cellSize, cellSize, cellSize, 3, 1, true, true);
+        ShipCanvasObject ship3 = new ShipCanvasObject("Submarine", canvas.getHeight() + cellSize, 2 * cellSize, cellSize, 3, 1, true, true);
+        ShipCanvasObject ship4 = new ShipCanvasObject("Battleship", canvas.getHeight() + cellSize, 3 * cellSize, cellSize, 4, 1, true, true);
+        ShipCanvasObject ship5 = new ShipCanvasObject("AircraftCarrier", canvas.getHeight() + cellSize, 4 * cellSize, cellSize, 5, 1, true, true);
         ShipCanvasObject ship2 = new ShipCanvasObject("Cruiser", canvas.getHeight() + cellSize, cellSize, cellSize, 3, 1, true, true);
         ShipCanvasObject ship3 = new ShipCanvasObject("Submarine", canvas.getHeight() + cellSize, 2 * cellSize, cellSize, 3, 1, true, true);
         ShipCanvasObject ship4 = new ShipCanvasObject("Battleship", canvas.getHeight() + cellSize, 3 * cellSize, cellSize, 4, 1, true, true);

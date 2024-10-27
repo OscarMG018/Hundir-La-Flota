@@ -9,11 +9,18 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
 
 import com.hundirlaflota.Client.Main;
 import com.hundirlaflota.Common.ServerMessages.MessageType;
 
+import com.hundirlaflota.Common.ServerMessages.MessageType;
+
 import java.util.ArrayList;
+
+
+import org.json.JSONObject;
 
 
 import org.json.JSONObject;
@@ -30,6 +37,8 @@ public class TurnViewController implements Initializable, OnSceneVisible {
 
     private ObservableCollection<Position> myAttacks = new ObservableCollection<>(new ArrayList<Position>());
     private ObservableCollection<ShipCanvasObject> opponentShips = new ObservableCollection<>(new ArrayList<ShipCanvasObject>());
+    private ObservableCollection<Position> myAttacks = new ObservableCollection<>(new ArrayList<Position>());
+    private ObservableCollection<ShipCanvasObject> opponentShips = new ObservableCollection<>(new ArrayList<ShipCanvasObject>());
 
     @FXML
     private Canvas canvas;
@@ -41,6 +50,7 @@ public class TurnViewController implements Initializable, OnSceneVisible {
     @Override
     public void onSceneVisible() {
         ws = UtilsWS.getSharedInstance(Main.UsedLocation);
+        ws.setOnMessage(this::handleMessage);
         ws.setOnMessage(this::handleMessage);
         canvasManager.clear();
         canvasManager.addObject(grid);
@@ -84,6 +94,9 @@ public class TurnViewController implements Initializable, OnSceneVisible {
             for (Position pos : myAttacks) {
                 double[] cellCenter = grid.getCellCenter(pos.getY(), pos.getX());
                 if (opponentShips.stream().anyMatch(ship -> ship.isPointInObject(cellCenter[0], cellCenter[1]))) {
+            for (Position pos : myAttacks) {
+                double[] cellCenter = grid.getCellCenter(pos.getY(), pos.getX());
+                if (opponentShips.stream().anyMatch(ship -> ship.isPointInObject(cellCenter[0], cellCenter[1]))) {
                     grid.setCellColor(pos.getY(), pos.getX(), Color.RED);
                 } else {
                     grid.setCellColor(pos.getY(), pos.getX(), Color.BLUE);
@@ -91,6 +104,10 @@ public class TurnViewController implements Initializable, OnSceneVisible {
             }
             
             // Draw my ships
+            for (ShipCanvasObject ship : opponentShips) {
+                if (isSunk(new ArrayList<>(myAttacks.get()), ship)) {
+                    canvasManager.addObject(ship);
+                }
             for (ShipCanvasObject ship : opponentShips) {
                 if (isSunk(new ArrayList<>(myAttacks.get()), ship)) {
                     canvasManager.addObject(ship);

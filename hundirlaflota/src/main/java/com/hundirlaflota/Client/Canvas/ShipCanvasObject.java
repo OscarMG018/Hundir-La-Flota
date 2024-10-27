@@ -4,9 +4,15 @@ import java.util.ArrayList;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
+import org.json.JSONObject;
+
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.*;
+import com.hundirlaflota.Client.Utils.*;
+import com.hundirlaflota.Common.ServerMessages.ShipData;
 import com.hundirlaflota.Client.Utils.*;
 import com.hundirlaflota.Common.ServerMessages.ShipData;
 
@@ -23,6 +29,8 @@ public class ShipCanvasObject extends CanvasObject {
     private double dragy = 0;
     private Position cellPosition;
 
+    private Position cellPosition;
+
 
 
     public ShipCanvasObject(String ShipName, double X, double Y, double cellSize, int size, int zIndex, boolean isDraggable, boolean horizontal) {
@@ -32,6 +40,8 @@ public class ShipCanvasObject extends CanvasObject {
         this.isDraggable = isDraggable;
         this.horizontal = horizontal;
         this.cellSize = cellSize;
+        this.isClickable = false;
+        this.cellPosition = new Position(-1, -1);
         this.isClickable = false;
         this.cellPosition = new Position(-1, -1);
     }

@@ -8,9 +8,22 @@ import org.java_websocket.handshake.ClientHandshake;
 import java.util.ArrayList;
 import java.util.Random;
 
+import java.util.Random;
+
 import org.json.*;
 
 import com.hundirlaflota.Common.ServerMessages.*;
+
+/*TODO:
+
+tomorrow:
+- add mouse message
+- change the way the client updates room list to only change what has changed
+
+- debug the game and the changes in the client
+- separate the server and client to different packages
+*/
+
 
 public class Server extends WebSocketServer {
 
@@ -145,9 +158,14 @@ public class Server extends WebSocketServer {
           player.sendMessage(new ErrorMessage("You are not in a room", MessageType.ROOM_INFO).toString());
           break;
         }
+        if (player.getRoom() == null) {
+          player.sendMessage(new ErrorMessage("You are not in a room", MessageType.ROOM_INFO).toString());
+          break;
+        }
         Room playerRoom = player.getRoom();
         JSONObject roomInfo = playerRoom.toJSON();
         roomInfo.put("isHost", playerRoom.isHost(player));
+        player.sendMessage(new AckMessage(roomInfo.toString(), MessageType.ROOM_INFO,false).toString());
         player.sendMessage(new AckMessage(roomInfo.toString(), MessageType.ROOM_INFO,false).toString());
         break;
       case LEAVE_ROOM:
