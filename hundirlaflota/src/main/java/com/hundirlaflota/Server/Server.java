@@ -14,17 +14,6 @@ import org.json.*;
 
 import com.hundirlaflota.Common.ServerMessages.*;
 
-/*TODO:
-
-tomorrow:
-- add mouse message
-- change the way the client updates room list to only change what has changed
-
-- debug the game and the changes in the client
-- separate the server and client to different packages
-*/
-
-
 public class Server extends WebSocketServer {
 
   private ArrayList<Player> players = new ArrayList<>();
