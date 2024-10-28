@@ -1,0 +1,13 @@
+#SetShipsButton {
+    -fx-font-size: 16px;
+    -fx-text-fill: #fff;
+    -fx-background-radius: 5;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 5);
+    -fx-background-color: #2196F3;
+}
+
+#SetShipsButton:hover {
+    -fx-background-color: #1976D2;
+}
