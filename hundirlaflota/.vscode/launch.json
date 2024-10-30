@@ -3,6 +3,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Server",
+            "request": "launch",
+            "mainClass": "Server",
+            "projectName": "Serve   r"
+        },
+        {
+            "type": "java",
+            "name": "Server",
+            "request": "launch",
+            "mainClass": "Server",
+            "projectName": "hundirlaflota"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"
