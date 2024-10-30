@@ -14,6 +14,8 @@ public class CanvasManager {
 
     private ArrayList<CanvasObject> hoverObjects;
     private CanvasObject dragObject;
+    private double lastDragX;
+    private double lastDragY;
 
     public CanvasManager(Canvas canvas) {
         this.canvas = canvas;
@@ -105,22 +107,29 @@ public class CanvasManager {
     }
 
     private void handleMouseDrag(MouseEvent event) {
-        if (dragObject != null && isPointInObject(event.getX(), event.getY(), dragObject)) {
+        double deltaX = event.getX() - lastDragX;
+        double deltaY = event.getY() - lastDragY;
+        
+        if (dragObject != null) {
             dragObject.OnDrag(event);
             draw();
+            lastDragX = event.getX();
+            lastDragY = event.getY();
             return;
         }
+
         for (CanvasObject object : objects) {
             if (object.isDraggable && isPointInObject(event.getX(), event.getY(), object)) {
-                if (dragObject != object) {
-                    dragObject = object;
-                    dragObject.OnDragStart(event);
-                }
+                dragObject = object;
+                dragObject.OnDragStart(event);
                 dragObject.OnDrag(event);
                 break;
             }
         }
+        
         draw();
+        lastDragX = event.getX();
+        lastDragY = event.getY();
     }
 
     private void handleMouseRelease(MouseEvent event) {
@@ -144,5 +153,9 @@ public class CanvasManager {
 
     private boolean isPointInObject(double x, double y, CanvasObject object) {
         return object.isPointInObject(x, y);
+    }
+
+    private boolean isPointInObject(double x, double y, CanvasObject object, double offsetX, double offsetY) {
+        return object.isPointInObject(x - offsetX, y - offsetY);
     }
 }

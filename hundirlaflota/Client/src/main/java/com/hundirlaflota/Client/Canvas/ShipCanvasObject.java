@@ -24,8 +24,6 @@ public class ShipCanvasObject extends CanvasObject {
     private double dragy = 0;
     private Position cellPosition;
 
-
-
     public ShipCanvasObject(String ShipName, double X, double Y, double cellSize, int size, int zIndex, boolean isDraggable, boolean horizontal) {
         super(X, Y, horizontal ? cellSize * size : cellSize, horizontal ? cellSize : cellSize * size, zIndex);
         this.size = size;
