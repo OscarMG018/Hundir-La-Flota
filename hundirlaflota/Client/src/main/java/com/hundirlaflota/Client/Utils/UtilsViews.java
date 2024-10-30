@@ -12,6 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class UtilsViews {
@@ -173,5 +174,9 @@ public class UtilsViews {
 
         // Remove focus from buttons
         parentContainer.requestFocus();
+    }
+
+    public static Stage getStage() {
+        return (Stage) parentContainer.getScene().getWindow();
     }
 }

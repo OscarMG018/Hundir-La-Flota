@@ -51,6 +51,9 @@ public class LoginViewController implements Initializable, OnSceneVisible {
             }
         } else if (type == MessageType.ERROR) {
             System.out.println("Error: " + json.getString("message"));
+            Platform.runLater(() -> {
+                new ErrorPopup("Error", "Login", json.getString("message"), 3000, UtilsViews.getStage());
+            });
         }
     }
     
