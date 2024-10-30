@@ -245,6 +245,9 @@ public class Server extends WebSocketServer {
         if (result == Game.ShootResult.END) {
           player.getRoom().getHost().sendMessage(new EndGameMessage().toString());
           player.getRoom().getInvite().sendMessage(new EndGameMessage().toString());
+          //clear the Room ships
+          player.getRoom().setHostShips(new ArrayList<ShipData>());
+          player.getRoom().setInviteShips(new ArrayList<ShipData>());
         }
         else if (result == Game.ShootResult.INVALID) {
           player.sendMessage(new ErrorMessage("Invalid coordinate", MessageType.SHOOT).toString());

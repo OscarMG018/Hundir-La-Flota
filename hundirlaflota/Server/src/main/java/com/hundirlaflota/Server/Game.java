@@ -64,7 +64,7 @@ public class Game {
         rootNode.put("playerPosition", "");
         rootNode.put("playerName", playerName);
         try {
-            objectMapper.writeValue(new File(basePath + jsonFileName), rootNode);
+            objectMapper.writeValue(new File(basePath + jsonFileName + ".json"), rootNode);
         } catch (IOException e) {
         }
     }
@@ -72,7 +72,7 @@ public class Game {
     public static ShootResult playShips(String jsonFileName, String coordinate) {
         List<String> shipNames = Arrays.asList("AircraftCarrier", "Battleship", "Cruiser", "Submarine", "Destroyer");
         ObjectMapper objectMapper = new ObjectMapper();
-        String FileName = basePath + jsonFileName;
+        String FileName = basePath + jsonFileName + ".json";
         try {
             File jsonFile = new File(FileName);
             JsonNode rootNode = objectMapper.readTree(jsonFile);
@@ -127,7 +127,7 @@ public class Game {
         List<String> shipNames = Arrays.asList("AircraftCarrier", "Battleship", "Cruiser", "Submarine", "Destroyer");
         try {
             System.out.println("Checking if lost");
-            File jsonFile = new File(basePath + jsonFileName);
+            File jsonFile = new File(basePath + jsonFileName + ".json");
             JsonNode rootNode = objectMapper.readTree(jsonFile);
             System.out.println("Root node: " + rootNode);
             Iterator<Map.Entry<String, JsonNode>> fields = rootNode.fields();
@@ -176,7 +176,7 @@ public class Game {
         }
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            File jsonFile = new File(basePath + jsonFileName);
+            File jsonFile = new File(basePath + jsonFileName + ".json");
             JsonNode rootNode = objectMapper.readTree(jsonFile);
             char row = coordinate.charAt(0);
             int col = Integer.parseInt(coordinate.substring(1));
