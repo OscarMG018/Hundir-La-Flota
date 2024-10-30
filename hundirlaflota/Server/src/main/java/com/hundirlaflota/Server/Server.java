@@ -95,7 +95,7 @@ public class Server extends WebSocketServer {
         for (Player p : players) {
           if (p.getName().equals(playerName)) {
             player.sendMessage(new ErrorMessage("Player name already taken", MessageType.LOGIN).toString());
-            break;
+            return;
           }
         }
         player.setName(playerName);
