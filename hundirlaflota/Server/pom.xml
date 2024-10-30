@@ -33,4 +33,33 @@
             <version>1.5.3</version>
         </dependency>
     </dependencies>
+    <!-- Build Server with common and dependencies -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.hundirlaflota.Server.Server</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptors>
+                        <descriptor>jar-with-dependencies</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
