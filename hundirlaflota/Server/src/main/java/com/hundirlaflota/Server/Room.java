@@ -93,8 +93,13 @@ public class Room implements Serializable {
    }
 
    public void removePlayer(Player player) {
-      if (invite == player) {
+      player.setRoom(null);
+      if (isHost(player)) {
+         PromoteInvite();
+      }
+      else {
          invite = null;
+         inviteReady = false;
       }
    }
 
@@ -117,6 +122,8 @@ public class Room implements Serializable {
    public void PromoteInvite() {
       host = invite;
       invite = null;
+      hostReady = inviteReady;
+      inviteReady = false;
    }
 
    public ArrayList<ShipData> getHostShips() {

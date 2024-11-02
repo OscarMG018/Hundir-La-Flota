@@ -154,21 +154,14 @@ public class Server extends WebSocketServer {
         player.sendMessage(new AckMessage(roomInfo.toString(), MessageType.ROOM_INFO,false).toString());
         break;
       case LEAVE_ROOM:
-        if (player.getRoom() == null)  {
+        Room leaveRoom = player.getRoom();
+        if (leaveRoom == null)  {
           player.sendMessage(new ErrorMessage("You are not in a room", MessageType.LEAVE_ROOM).toString());
         }
-        if (player.getRoom().isHost(player)) {
-          if (player.getRoom().getInvite() == null) {
-            rooms.remove(player.getRoom());
-          }
-          else {
-            player.getRoom().PromoteInvite();
-          }
+        leaveRoom.removePlayer(player);
+        if (leaveRoom.isEmpty()) {
+          rooms.remove(leaveRoom);
         }
-        else {
-          player.getRoom().removePlayer(player);
-        }
-        player.setRoom(null);
         player.sendMessage(new AckMessage("", MessageType.LEAVE_ROOM).toString());
         break;
       case SET_READY:
