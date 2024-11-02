@@ -147,10 +147,6 @@ public class Server extends WebSocketServer {
           player.sendMessage(new ErrorMessage("You are not in a room", MessageType.ROOM_INFO).toString());
           break;
         }
-        if (player.getRoom() == null) {
-          player.sendMessage(new ErrorMessage("You are not in a room", MessageType.ROOM_INFO).toString());
-          break;
-        }
         Room playerRoom = player.getRoom();
         JSONObject roomInfo = playerRoom.toJSON();
         roomInfo.put("isHost", playerRoom.isHost(player));

@@ -3,4 +3,3 @@
 desactiva al quitar un barco
 - El boton de put ships en la pantalla de Ships no tiene feedback visual
 - cuando el host sale de la sala, la variable ready no cambia a el valor de el que era el invitado
-- Los errores del servidor no se muestran en la interfaz

@@ -86,8 +86,17 @@ public class RoomListViewController implements Initializable, OnSceneVisible {
                 });
             }
         } else if (type == MessageType.ERROR) {
-            System.out.println("Error: " + json.getString("message"));
-            System.out.println("Error: " + json.getString("message"));
+            Platform.runLater(() -> {
+                MessageType requestType = MessageType.valueOf(json.getString("requestType"));
+                String header = "";
+                if (requestType == MessageType.JOIN_ROOM) {
+                    header = "Room Joining";
+                }
+                else if (requestType == MessageType.CREATE_ROOM) {
+                    header = "Room Creation";
+                }
+                ErrorPopup.showError(header, json.getString("message"), 3000, UtilsViews.getStage());
+            });
         }
     }
 
