@@ -3,6 +3,21 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "com.hundirlaflota.Client.Main",
+            "projectName": "Client",
+            "vmArgs": "--module-path \"C:\\Program Files\\Java\\javafx-sdk-22.0.1\\lib\" --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "Server",
+            "request": "launch",
+            "mainClass": "com.hundirlaflota.Server.Server",
+            "projectName": "Server"
+        },
+        {
+            "type": "java",
             "name": "Server",
             "request": "launch",
             "mainClass": "Server",

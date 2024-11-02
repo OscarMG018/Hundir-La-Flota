@@ -6,6 +6,8 @@ import javafx.scene.control.Label;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.scene.layout.Pane;
+
 public class ErrorPopup extends Popup {
     private Label title;
     private Label header;
