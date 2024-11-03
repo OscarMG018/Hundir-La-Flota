@@ -11,10 +11,13 @@ import java.util.ArrayList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.application.Platform;
+import javafx.scene.paint.Color;
+import javafx.scene.input.MouseEvent;
 
 import com.hundirlaflota.Client.Main;
 import com.hundirlaflota.Client.Canvas.*;
@@ -69,6 +72,25 @@ public class ShipsViewController implements Initializable, OnSceneVisible {
         ships.add(ship4);
         ships.add(ship5);
         grid.setShipOnGrid(ships);
+        //ship Space
+        CanvasObject shipSpace = new CanvasObject(grid.getWidth(), 0, canvas.getWidth() - grid.getWidth(), canvas.getHeight(), 0, false, false) {
+            @Override
+            public void draw(GraphicsContext gc) {
+                gc.setFill(Color.TRANSPARENT);
+                gc.fillRect(0, 0, getWidth(), getHeight());
+            }
+
+            @Override
+            public void OnDrop(MouseEvent event, CanvasObject source) {
+                if (source instanceof ShipCanvasObject) {
+                    ShipCanvasObject ship = (ShipCanvasObject) source;
+                    ship.setCellPosition(-1, -1);
+                    checkAllShipsSet();
+                }
+            }
+        };
+        canvasManager.addObject(shipSpace);
+        
         canvasManager.draw();
         SetShipsButton.setDisable(true);
         SetShipsButton.setOnAction(event -> {

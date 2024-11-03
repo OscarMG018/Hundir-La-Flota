@@ -1,4 +1,1 @@
 - Puedes arrastrar un barco fuera de la pantalla
-- El boton de put ships en la pantalla de Ships se activa cunado se ponen todos los barcos pero no se
-desactiva al quitar un barco
-- El boton de put ships en la pantalla de Ships no tiene feedback visual

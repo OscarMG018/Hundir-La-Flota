@@ -23,19 +23,14 @@ public class GridCanvasObject extends CanvasObject {
     private Runnable onShipsSet;
 
     public GridCanvasObject(double x, double y, double size, int zIndex, int gridSize, double borderSize) {
-        super(x, y, size, size, zIndex);
+        super(x, y, size, size, zIndex, false, false);
         this.gridSize = gridSize;
         this.borderSize = borderSize;
         this.ships = new ArrayList<>();
         initializeCells();
-        this.isClickable = false;
         this.sendMouseOver = false;
         this.ws = UtilsWS.getSharedInstance(Main.UsedLocation);
         this.onShipsSet = null;
-    }
-
-    public void setClickable(boolean isClickable) {
-        this.isClickable = isClickable;
     }
 
     public void setSendMouseOver(boolean sendMouseOver) {

@@ -16,12 +16,14 @@ public abstract class CanvasObject {
     protected boolean isDraggable = false;
     protected boolean isClickable = false;
 
-    public CanvasObject(double x, double y, double width, double height, int zIndex) {
+    public CanvasObject(double x, double y, double width, double height, int zIndex, boolean isClickable, boolean isDraggable) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.zIndex = zIndex;
+        this.isClickable = isClickable;
+        this.isDraggable = isDraggable;
     }
 
     public void addChild(CanvasObject child) {
@@ -109,5 +111,13 @@ public abstract class CanvasObject {
     
     public void setClickable(boolean isClickable) {
         this.isClickable = isClickable;
+    }
+
+    public boolean isDraggable() {
+        return isDraggable;
+    }
+
+    public void setDraggable(boolean isDraggable) {
+        this.isDraggable = isDraggable;
     }
 }

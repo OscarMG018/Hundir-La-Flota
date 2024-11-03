@@ -25,13 +25,11 @@ public class ShipCanvasObject extends CanvasObject {
     private Position cellPosition;
 
     public ShipCanvasObject(String ShipName, double X, double Y, double cellSize, int size, int zIndex, boolean isDraggable, boolean horizontal) {
-        super(X, Y, horizontal ? cellSize * size : cellSize, horizontal ? cellSize : cellSize * size, zIndex);
+        super(X, Y, horizontal ? cellSize * size : cellSize, horizontal ? cellSize : cellSize * size, zIndex, false, isDraggable);
         this.size = size;
         this.ShipName = ShipName;
-        this.isDraggable = isDraggable;
         this.horizontal = horizontal;
         this.cellSize = cellSize;
-        this.isClickable = false;
         this.cellPosition = new Position(-1, -1);
     }
 
