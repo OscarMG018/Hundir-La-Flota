@@ -83,6 +83,8 @@ public class ShipsViewController implements Initializable, OnSceneVisible {
             }
             c.setMyShips(adjustedShips);
             ws.safeSend(new PutShipsMessage(shipsData).toString());
+            SetShipsButton.setDisable(true);
+            SetShipsButton.setText("Ships are set");
         });
 
         UtilsViews.parentContainer.setFocusTraversable(true);
@@ -124,9 +126,11 @@ public class ShipsViewController implements Initializable, OnSceneVisible {
     }
 
     public void checkAllShipsSet() {
+        SetShipsButton.setText("Set ships");
         for (ShipCanvasObject ship : ships) {
             Position pos = ship.getCellPosition();
             if (pos.getX() == -1 || pos.getY() == -1) {
+                SetShipsButton.setDisable(true);
                 return;
             }
         }
