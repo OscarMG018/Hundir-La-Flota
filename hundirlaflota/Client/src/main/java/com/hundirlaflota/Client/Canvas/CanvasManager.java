@@ -133,21 +133,14 @@ public class CanvasManager {
     }
 
     private void handleMouseRelease(MouseEvent event) {
+        dragObject.OnDragEnd(event);
         for (CanvasObject object : objects) {
-            if (object.isDraggable && isPointInObject(event.getX(), event.getY(), object)) {
-                object.OnDragEnd(event);
-                for (CanvasObject object2 : objects) {
-                    if (object2 == object)
-                        continue;
-                    if (isPointInObject(event.getX(), event.getY(), object2)) {
-                        object2.OnDrop(event, object);
-                        break;
-                    }
-                }
-                dragObject = null;
+            if (dragObject != object && isPointInObject(event.getX(), event.getY(), object)) {
+                object.OnDrop(event, dragObject);
                 break;
             }
         }
+        dragObject = null;
         draw();
     }
 

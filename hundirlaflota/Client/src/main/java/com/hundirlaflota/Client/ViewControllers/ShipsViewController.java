@@ -51,26 +51,15 @@ public class ShipsViewController implements Initializable, OnSceneVisible {
         canvasManager.clear();
         grid = new GridCanvasObject(0, 0, canvas.getHeight(), 0, 10, 0);
         grid.setOnShipsSet(this::checkAllShipsSet);
-
         canvasManager.addObject(grid);
         // Add ships to the side
         cellSize = grid.getCellSize();
-        ShipCanvasObject ship1 = new ShipCanvasObject("Destroyer", canvas.getHeight() + cellSize, 0, cellSize, 2, 1, true, true);
-        ShipCanvasObject ship2 = new ShipCanvasObject("Cruiser", canvas.getHeight() + cellSize, cellSize, cellSize, 3, 1, true, true);
-        ShipCanvasObject ship3 = new ShipCanvasObject("Submarine", canvas.getHeight() + cellSize, 2 * cellSize, cellSize, 3, 1, true, true);
-        ShipCanvasObject ship4 = new ShipCanvasObject("Battleship", canvas.getHeight() + cellSize, 3 * cellSize, cellSize, 4, 1, true, true);
-        ShipCanvasObject ship5 = new ShipCanvasObject("AircraftCarrier", canvas.getHeight() + cellSize, 4 * cellSize, cellSize, 5, 1, true, true);
-        canvasManager.addObject(ship1);
-        canvasManager.addObject(ship2);
-        canvasManager.addObject(ship3);
-        canvasManager.addObject(ship4);
-        canvasManager.addObject(ship5);
         ships = new ArrayList<>();
-        ships.add(ship1);
-        ships.add(ship2);
-        ships.add(ship3);
-        ships.add(ship4);
-        ships.add(ship5);
+        CreateShip("Destroyer", canvas.getHeight() + cellSize, 0, cellSize, 2, true);
+        CreateShip("Cruiser", canvas.getHeight() + cellSize, cellSize, cellSize, 3, true);
+        CreateShip("Submarine", canvas.getHeight() + cellSize, 2 * cellSize, cellSize, 3, true);
+        CreateShip("Battleship", canvas.getHeight() + cellSize, 3 * cellSize, cellSize, 4, true);
+        CreateShip("AircraftCarrier", canvas.getHeight() + cellSize, 4 * cellSize, cellSize, 5, true);
         grid.setShipOnGrid(ships);
         //ship Space
         CanvasObject shipSpace = new CanvasObject(grid.getWidth(), 0, canvas.getWidth() - grid.getWidth(), canvas.getHeight(), 0, false, false) {
@@ -157,6 +146,16 @@ public class ShipsViewController implements Initializable, OnSceneVisible {
             }
         }
         SetShipsButton.setDisable(false);
+    }
+
+    private void CreateShip(String name, double x, double y,double cellSize, int Size, boolean horizontal) {
+        ShipCanvasObject ship = new ShipCanvasObject(name, x, y,cellSize, Size, 1, horizontal, true);
+        ship.setMinX(0);
+        ship.setMinY(0);
+        ship.setMaxX(canvas.getWidth());
+        ship.setMaxY(canvas.getHeight());
+        ships.add(ship);
+        canvasManager.addObject(ship);
     }
 
     public void handleMessage(String message) {

@@ -23,6 +23,10 @@ public class ShipCanvasObject extends CanvasObject {
     private double dragx = 0;
     private double dragy = 0;
     private Position cellPosition;
+    private double minX;
+    private double minY;
+    private double maxX;
+    private double maxY;
 
     public ShipCanvasObject(String ShipName, double X, double Y, double cellSize, int size, int zIndex, boolean isDraggable, boolean horizontal) {
         super(X, Y, horizontal ? cellSize * size : cellSize, horizontal ? cellSize : cellSize * size, zIndex, false, isDraggable);
@@ -61,6 +65,22 @@ public class ShipCanvasObject extends CanvasObject {
         this.YOffset = yOffset;
     }
 
+    public void setMinX(double minX) {
+        this.minX = minX;
+    }
+
+    public void setMinY(double minY) {
+        this.minY = minY;
+    }
+
+    public void setMaxX(double maxX) {
+        this.maxX = maxX;
+    }
+
+    public void setMaxY(double maxY) {
+        this.maxY = maxY;
+    }
+
     @Override
     public void draw(GraphicsContext gc) {
         Image ship = new Image(getClass().getResourceAsStream("/images/" + ShipName + (horizontal ? "_H" : "_V") + ".png"));
@@ -83,8 +103,26 @@ public class ShipCanvasObject extends CanvasObject {
     @Override
     public void OnDrag(MouseEvent event) {
         if (isDraggable) {
+            if (event.getX() < minX || event.getX() > maxX || event.getY() < minY || event.getY() > maxY) {
+                return;
+            }
             x = event.getX() - XOffset;
             y = event.getY() - YOffset;
+            //ensure that all of the ship is on the canvas
+            if (x < minX) {
+                x = minX;
+                XOffset = event.getX() - x;
+            } else if (x + width > maxX) {
+                x = maxX - width;
+                XOffset = event.getX() - x;
+            }
+            if (y < minY) {
+                y = minY;
+                YOffset = event.getY() - y;
+            } else if (y + height > maxY) {
+                y = maxY - height;
+                YOffset = event.getY() - y;
+            }
         }
     }
 
