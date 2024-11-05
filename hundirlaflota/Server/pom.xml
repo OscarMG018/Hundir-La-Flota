@@ -46,9 +46,9 @@
                             <mainClass>com.hundirlaflota.Server.Server</mainClass>
                         </manifest>
                     </archive>
-                    <descriptors>
-                        <descriptor>jar-with-dependencies</descriptor>
-                    </descriptors>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
                 </configuration>
                 <executions>
                     <execution>
