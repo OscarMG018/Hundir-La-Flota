@@ -11,7 +11,7 @@ import com.hundirlaflota.Client.Utils.*;
 
 public class Main extends Application {
     public static String LocalLocation = "ws://localhost:8080";
-    public static String ServerLocation = "ws://:8080";
+    public static String ServerLocation = "ws://aelbakhti.ieti.cat:8080";
     public static String UsedLocation = "";
     public static void main(String[] args) {
         launch(args);
