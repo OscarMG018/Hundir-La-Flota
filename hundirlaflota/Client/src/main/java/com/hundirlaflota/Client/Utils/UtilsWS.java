@@ -31,6 +31,7 @@ public class UtilsWS  extends WebSocketClient {
             try {
                 sharedInstance = new UtilsWS(location, (Draft) new Draft_6455());
                 sharedInstance.connect();
+                System.out.println("aqui"+sharedInstance.getRemoteSocketAddress());
                 isConnected.set(true);
             } catch (URISyntaxException e) { 
                 e.printStackTrace(); 
@@ -79,6 +80,7 @@ public class UtilsWS  extends WebSocketClient {
         try {
             sharedInstance.send(text);
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("WS Error sending message");
         }
     }
