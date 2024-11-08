@@ -27,17 +27,15 @@ Write-Host "User: $USER"
 Write-Host "Ruta RSA: $RSA_PATH"
 Write-Host "Server port: $SERVER_PORT"
 
+Set-Location ..
+
 $JAR_NAME="Server-1.0-SNAPSHOT-jar-with-dependencies.jar"
-$JAR_PATH = "..\target\$JAR_NAME"
+$JAR_PATH = ".\target\$JAR_NAME"
 
 if (-Not (Test-Path $RSA_PATH)) {
     Write-Host "Error: No s'ha trobat el fitxer de clau privada: $RSA_PATH"
     Set-Location proxmox
     exit 1
-}
-
-if (Test-Path $JAR_PATH) {
-    Remove-Item -Force $JAR_PATH
 }
 
 if (-Not (Test-Path $JAR_PATH)) {

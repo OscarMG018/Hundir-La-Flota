@@ -22,7 +22,7 @@ public class Server extends WebSocketServer {
   public static void main(String[] args) {
     System.out.println("Servidor nuevo");
     Game.init();
-    int port = 8080;
+    int port = 3000;
     Server server = new Server(new InetSocketAddress("0.0.0.0", port));
     server.start();
     System.out.println("Server started on port " + port);

@@ -78,6 +78,7 @@ public class UtilsWS  extends WebSocketClient {
 
     public void safeSend(String text) {
         try {
+            System.out.println("aqui: " + sharedInstance.getRemoteSocketAddress());
             sharedInstance.send(text);
         } catch (Exception e) {
             e.printStackTrace();
