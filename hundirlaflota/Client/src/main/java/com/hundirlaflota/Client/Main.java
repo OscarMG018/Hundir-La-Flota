@@ -10,9 +10,10 @@ import javafx.stage.Stage;
 import com.hundirlaflota.Client.Utils.*;
 
 public class Main extends Application {
-    public static String LocalLocation = "ws://localhost:8080";
+    public static String LocalLocation = "ws://localhost:3000";
     public static String ServerLocation = "wss://omedinagalvez.ieti.site:443";
     public static String UsedLocation = "";
+    
     public static void main(String[] args) {
         launch(args);
     }
